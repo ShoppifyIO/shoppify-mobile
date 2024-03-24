@@ -1,7 +1,7 @@
 import React from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import ActiveListsScreen from './ActiveListsScreen'; // Musisz utworzyć ten komponent
-import HistoryScreen from './HistoryScreen'; // Musisz utworzyć ten komponent
+import ActiveListsScreen from './Lists/ActiveListsScreen'; // Musisz utworzyć ten komponent
+import HistoryScreen from './Lists/HistoryScreen'; // Musisz utworzyć ten komponent
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const TopTab = createMaterialTopTabNavigator();

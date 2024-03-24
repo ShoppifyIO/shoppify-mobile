@@ -1,11 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const ActiveListsScreen = () => {
+const HistoryScreen = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Aktywne listy</Text>
-      {/* Tutaj możesz dodać logikę wyświetlania aktywnych list */}
+      <Text style={styles.text}>Historia</Text>
     </View>
   );
 };
@@ -21,4 +20,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ActiveListsScreen;
+export default HistoryScreen;
