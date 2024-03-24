@@ -2,7 +2,7 @@ import { ShoppingListHeader } from "../models/shoppingListHeader";
 
 export const mockActiveLists: ShoppingListHeader[] = [
     {
-        id: '1',
+        id: 1,
         name: 'Zakupy tygodniowe',
         categoryName: 'Domowe',
         categoryColor: '#FADADD', // Pastelowy róż
@@ -11,7 +11,7 @@ export const mockActiveLists: ShoppingListHeader[] = [
         updatedBy: 'julia88',
     },
     {
-        id: '2',
+        id: 2,
         name: 'Prezenty urodzinowe',
         categoryName: 'Prezenty',
         categoryColor: '#E6E6FA', // Lawendowy
@@ -20,7 +20,7 @@ export const mockActiveLists: ShoppingListHeader[] = [
         updatedBy: 'anetkaB',
     },
     {
-        id: '3',
+        id: 3,
         name: 'Akcesoria do biegania',
         categoryName: 'Sport',
         categoryColor: '#B8E0D2', // Miętowy
@@ -29,7 +29,7 @@ export const mockActiveLists: ShoppingListHeader[] = [
         updatedBy: 'tommyR',
     },
     {
-        id: '4',
+        id: 4,
         name: 'Sprzęt wędkarski',
         categoryName: 'Hobby',
         categoryColor: '#FFDFBA', // Blady pomarańcz
@@ -38,7 +38,7 @@ export const mockActiveLists: ShoppingListHeader[] = [
         updatedBy: 'fisherKris',
     },
     {
-        id: '5',
+        id: 5,
         name: 'Artykuły szkolne',
         categoryName: 'Edukacja',
         categoryColor: '#FFFACD', // Pastelowy żółty
@@ -47,7 +47,7 @@ export const mockActiveLists: ShoppingListHeader[] = [
         updatedBy: 'piotrWaves',
     },
     {
-        id: '6',
+        id: 6,
         name: 'Piwne specjały',
         categoryName: 'Rozrywka',
         categoryColor: '#A7C7E7', // Pastelowy niebieski
@@ -56,7 +56,7 @@ export const mockActiveLists: ShoppingListHeader[] = [
         updatedBy: 'beerMarcin',
     },
     {
-        id: '7',
+        id: 7,
         name: 'Kawa i herbata',
         categoryName: 'Spożywcze',
         categoryColor: null,
@@ -65,7 +65,7 @@ export const mockActiveLists: ShoppingListHeader[] = [
         updatedBy: 'teaMaster',
     },
     {
-        id: '8',
+        id: 8,
         name: 'Gadżety elektroniczne',
         categoryName: 'Elektronika',
         categoryColor: '#D5A6BD', // Pastelowy fiolet
@@ -74,7 +74,7 @@ export const mockActiveLists: ShoppingListHeader[] = [
         updatedBy: 'gadgetGal',
     },
     {
-        id: '9',
+        id: 9,
         name: 'Ogród balkonowy',
         categoryName: 'Ogród',
         categoryColor: '#D5E8D4', // Pastelowa zieleń
@@ -83,7 +83,7 @@ export const mockActiveLists: ShoppingListHeader[] = [
         updatedBy: 'plantLady',
     },
     {
-        id: '10',
+        id: 10,
         name: 'Książki kucharskie',
         categoryName: 'Książki',
         categoryColor: '#F5CBA7', // Pastelowy pomarańcz
@@ -92,7 +92,7 @@ export const mockActiveLists: ShoppingListHeader[] = [
         updatedBy: 'chefInTraining',
     },
     {
-        id: '11',
+        id: 11,
         name: 'Sprzęt fotograficzny',
         categoryName: 'Fotografia',
         categoryColor: '#AED6F1', // Jasny błękit
@@ -101,7 +101,7 @@ export const mockActiveLists: ShoppingListHeader[] = [
         updatedBy: 'shutterbug',
     },
     {
-        id: '12',
+        id: 12,
         name: 'Zestaw do malowania',
         categoryName: 'Sztuka',
         categoryColor: '#E8DAEF', // Blady fiolet
@@ -110,7 +110,7 @@ export const mockActiveLists: ShoppingListHeader[] = [
         updatedBy: 'painterPro',
     },
     {
-        id: '13',
+        id: 13,
         name: 'Produkty do pielęgnacji samochodu',
         categoryName: 'Samochody',
         categoryColor: '#AED6F1',
@@ -119,7 +119,7 @@ export const mockActiveLists: ShoppingListHeader[] = [
         updatedBy: 'autoAficionado',
     },
     {
-        id: '14',
+        id: 14,
         name: 'Elektronika',
         categoryName: 'Gadżety',
         categoryColor: null,
@@ -128,7 +128,7 @@ export const mockActiveLists: ShoppingListHeader[] = [
         updatedBy: 'gadgetGuru',
     },
     {
-        id: '15',
+        id: 15,
         name: 'Rośliny domowe',
         categoryName: 'Ogród',
         categoryColor: null,

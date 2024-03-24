@@ -1,26 +1,35 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, ListRenderItemInfo } from 'react-native';
-import { mockActiveLists } from '../../mocks/activeLists';
+import { View, Modal, Button, FlatList } from 'react-native';
+import EditListModal from './EditListModal'; 
+import { ShoppingListHeader } from '../../models/shoppingListHeader';
 import { listStyles } from './listStyles';
 import ListHeader from './ListHeader';
 import AddListButton from './AddListButton';
-import { ShoppingListHeader } from '../../models/shoppingListHeader';
+import { mockActiveLists } from '../../mocks/activeLists';
 
 const ActiveListsScreen: React.FC = () => {
   const [lists, setLists] = useState<ShoppingListHeader[]>(mockActiveLists);
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [currentList, setCurrentList] = useState<ShoppingListHeader | null>(null);
 
   const addNewList = () => {
-    //todo: zmienić na generowane z formularza
+    // Przykładowe domyślne dane nowej listy
     const newList: ShoppingListHeader = {
-      id: String(lists.length + 1), // Proste generowanie nowego ID
+      id: lists.length + 1,
       name: 'Nowa lista zakupów',
       categoryName: 'Nowa kategoria',
       ownerUsername: 'NowyUżytkownik',
       updateDate: new Date().toISOString().slice(0, 10),
       updatedBy: 'NowyUżytkownik',
-      categoryColor: null, 
+      categoryColor: null,
     };
-    setLists([newList, ...lists]);
+    setCurrentList(newList); 
+    setModalVisible(true); 
+  };
+
+  const saveList = (updatedList: ShoppingListHeader) => {
+    setLists([updatedList, ...lists.filter(list => list.id !== updatedList.id)]);
+    setModalVisible(false); 
   };
 
   return (
@@ -28,9 +37,15 @@ const ActiveListsScreen: React.FC = () => {
       <FlatList
         data={lists}
         renderItem={({ item }) => <ListHeader model={item} />}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
       />
       <AddListButton onPress={addNewList} />
+      <Modal
+        visible={isModalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <EditListModal list={currentList} onSave={saveList} onClose={() => setModalVisible(false)} />
+      </Modal>
     </View>
   );
 };

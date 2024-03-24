@@ -1,7 +1,7 @@
 import { ShoppingListItem } from "./shoppingListItem";
 
 export interface ShoppingList{
-    id: string;
+    id: number;
     name: string;
     categoryName: string;
     categoryColor: string | null;
