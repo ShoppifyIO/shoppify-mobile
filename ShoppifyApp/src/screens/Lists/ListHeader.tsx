@@ -2,10 +2,10 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { listStyles } from './listStyles';
-import { ListHeader as ListHeaderModel } from '../../models/listHeader';
+import { ShoppingListHeader } from '../../models/shoppingListHeader';
 
 interface ListHeaderProps {
-  model: ListHeaderModel;
+  model: ShoppingListHeader;
 }
 
 const ListHeader: React.FC<ListHeaderProps> = ({ model }) => {

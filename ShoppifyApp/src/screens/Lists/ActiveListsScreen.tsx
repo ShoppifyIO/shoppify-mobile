@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, ListRenderItemInfo } from 'react-native';
 import { mockActiveLists } from '../../mocks/activeLists';
-import { ListHeader as ListHeaderModel } from '../../models/listHeader';
 import { listStyles } from './listStyles';
 import ListHeader from './ListHeader';
 import AddListButton from './AddListButton';
+import { ShoppingListHeader } from '../../models/shoppingListHeader';
 
 const ActiveListsScreen: React.FC = () => {
-  const [lists, setLists] = useState<ListHeaderModel[]>(mockActiveLists);
+  const [lists, setLists] = useState<ShoppingListHeader[]>(mockActiveLists);
 
   const addNewList = () => {
     //todo: zmienić na generowane z formularza
-    const newList: ListHeaderModel = {
+    const newList: ShoppingListHeader = {
       id: String(lists.length + 1), // Proste generowanie nowego ID
       name: 'Nowa lista zakupów',
       categoryName: 'Nowa kategoria',

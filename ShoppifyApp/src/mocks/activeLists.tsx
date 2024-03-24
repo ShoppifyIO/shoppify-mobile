@@ -1,6 +1,6 @@
-import { ListHeader } from "../models/listHeader";
+import { ShoppingListHeader } from "../models/shoppingListHeader";
 
-export const mockActiveLists: ListHeader[] = [
+export const mockActiveLists: ShoppingListHeader[] = [
     {
         id: '1',
         name: 'Zakupy tygodniowe',

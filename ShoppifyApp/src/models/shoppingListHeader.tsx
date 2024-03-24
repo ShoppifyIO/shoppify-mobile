@@ -1,4 +1,6 @@
-export interface ListHeader {
+import { ShoppingListItem } from "./shoppingListItem";
+
+export interface ShoppingListHeader {
     id: string;
     name: string;
     categoryName: string;
