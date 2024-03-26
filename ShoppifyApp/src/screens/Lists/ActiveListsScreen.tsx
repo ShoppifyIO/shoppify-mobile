@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Modal, Button, FlatList } from 'react-native';
-import EditListModal from './EditListModal'; 
+import EditListModal from '../../controls/ShoppingList/EditListModal'; 
 import { ShoppingListHeader } from '../../models/shoppingListHeader';
 import { listStyles } from './listStyles';
 import ListHeader from './ListHeader';

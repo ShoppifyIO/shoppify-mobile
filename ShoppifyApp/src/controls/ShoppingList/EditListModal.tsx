@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Button, TextInput, StyleSheet, Text, FlatList, Switch } from 'react-native';
+import { View, Button, TextInput, StyleSheet, Text, FlatList, Dimensions } from 'react-native';
 import { ShoppingList } from '../../models/list';
 import { ShoppingListItem } from '../../models/shoppingListItem';
 import { ShoppingListHeader } from '../../models/shoppingListHeader';
-import CustomCheckbox from '../../controls/CustomCheckbox';
+import ProductItem from './ProductItem'; // Upewnij się, że ścieżka do komponentu ProductItem jest poprawna
 
 interface EditListModalProps {
   list: ShoppingListHeader | null;
@@ -12,19 +12,22 @@ interface EditListModalProps {
 }
 
 const EditListModal: React.FC<EditListModalProps> = ({ list, onSave, onClose }) => {
-  const [name, setName] = useState("");
+  const [name, setName] = useState('');
   const [items, setItems] = useState<ShoppingListItem[]>([]);
 
   useEffect(() => {
     if (list) {
       setName(list.name);
+    
+      //todo:
       setItems(getListItems(list.id));
     }
   }, [list]);
 
   const handleSave = () => {
     if (list) {
-      onSave({ ...list, name, items });
+      const filteredItems = items.filter(item => item.name.trim() !== '');
+      onSave({ ...list, name, items: filteredItems });
     }
     onClose();
   };
@@ -36,11 +39,24 @@ const EditListModal: React.FC<EditListModalProps> = ({ list, onSave, onClose }) 
   };
 
   const addItem = () => {
-    setItems([...items, { name: '', isCompleted: false }]);
+    if (items.length === 0 || items[items.length - 1].name.trim() !== '') {
+      setItems([...items, { name: '', isCompleted: false }]);
+    }
   };
+
+  const renderProductItem = ({ item, index }: { item: ShoppingListItem; index: number }) => (
+    <ProductItem
+      name={item.name}
+      isCompleted={item.isCompleted}
+      onNameChange={(text) => handleItemChange({ ...item, name: text }, index)}
+      onCompletedChange={(newValue) => handleItemChange({ ...item, isCompleted: newValue }, index)}
+      onAddNewItem={addItem}
+    />
+  );
 
   return (
     <View style={styles.modalContainer}>
+      <Text style={styles.title}>Edytuj listę zakupów</Text>
       <TextInput
         style={styles.input}
         value={name}
@@ -49,22 +65,9 @@ const EditListModal: React.FC<EditListModalProps> = ({ list, onSave, onClose }) 
       />
       <FlatList
         data={items}
-        renderItem={({ item, index }) => (
-          <View style={styles.itemContainer}>
-            <TextInput
-              style={styles.itemInput}
-              value={item.name}
-              onChangeText={(text) => handleItemChange({ ...item, name: text }, index)}
-              placeholder="Nazwa produktu"
-            />
-            <CustomCheckbox
-              isChecked={item.isCompleted}
-              onCheckChange={(newValue: boolean) => handleItemChange({ ...item, isCompleted: newValue }, index)}
-            />
-          </View>
-        )}
+        renderItem={renderProductItem}
         keyExtractor={(_, index) => index.toString()}
-        ListFooterComponent={<Button title="Dodaj produkt" onPress={addItem} />}
+        ListFooterComponent={<Button title="Dodaj produkt" onPress={addItem} disabled={items.length > 0 && items[items.length - 1].name.trim() === ''} />}
       />
       <View style={styles.buttonsContainer}>
         <Button title="Zapisz" onPress={handleSave} />
@@ -77,39 +80,34 @@ const EditListModal: React.FC<EditListModalProps> = ({ list, onSave, onClose }) 
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     padding: 20,
+    backgroundColor: 'white',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
   },
   input: {
     borderWidth: 1,
-    borderColor: 'gray',
+    borderColor: '#ccc',
     width: '100%',
     padding: 10,
+    borderRadius: 5,
     marginBottom: 20,
-  },
-  itemContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  itemInput: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: 'gray',
-    marginRight: 10,
-    padding: 10,
   },
   buttonsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     width: '100%',
+    marginTop: 20,
   },
 });
 
 export default EditListModal;
+
 function getListItems(id: number) {
-  //todo: sięgnąć do backendu po elementy listy 
   return [];
 }
-
