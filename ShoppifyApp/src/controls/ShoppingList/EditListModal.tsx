@@ -67,7 +67,11 @@ const EditListModal: React.FC<EditListModalProps> = ({ list, onSave, onClose }) 
         data={items}
         renderItem={renderProductItem}
         keyExtractor={(_, index) => index.toString()}
-        ListFooterComponent={<Button title="Dodaj produkt" onPress={addItem} disabled={items.length > 0 && items[items.length - 1].name.trim() === ''} />}
+        ListFooterComponent={<Button 
+          title="Dodaj produkt" 
+          onPress={addItem} 
+          disabled={items.length > 0 && items[items.length - 1].name.trim() === ''} 
+          />}
       />
       <View style={styles.buttonsContainer}>
         <Button title="Zapisz" onPress={handleSave} />
@@ -104,6 +108,21 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: 20,
   },
+  saveButton: {
+
+  },
+  cancelButton: {
+
+  },
+  addProductButton: {
+    marginVertical: 10,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#A7C7E7',
+    borderRadius: 25,
+    elevation: 2,
+  }
 });
 
 export default EditListModal;
