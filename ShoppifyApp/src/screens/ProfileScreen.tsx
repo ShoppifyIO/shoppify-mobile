@@ -39,8 +39,8 @@ const userProfileStyles = StyleSheet.create({
     justifyContent: 'center', // Zapewnia, że treści są wyśrodkowane wertykalnie
   },
   profileImage: {
-    width: 150, // Dostosuj rozmiar według potrzeb
-    height: 150,
+    width: 170, // Dostosuj rozmiar według potrzeb
+    height: 170,
     borderRadius: 75, // Ustawienie pełnego zaokrąglenia
     marginBottom: 20,
   },
@@ -56,7 +56,7 @@ const userProfileStyles = StyleSheet.create({
   },
   logoutIcon: {
     position: 'absolute',
-    top: 20, // Dodanie marginesu, aby ikona nie nachodziła na pasek statusu
+    top: 30, // Dodanie marginesu, aby ikona nie nachodziła na pasek statusu
     right: 20,
   },
 });
