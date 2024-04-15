@@ -1,26 +1,33 @@
-// ActiveListItem.tsx
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { listStyles } from './listStyles';
 import { ShoppingListHeader } from '../../models/shoppingListHeader';
 
 interface ListHeaderProps {
   model: ShoppingListHeader;
+  onPress: (id: number) => void; 
 }
 
-const ListHeader: React.FC<ListHeaderProps> = ({ model }) => {
+const ListHeader: React.FC<ListHeaderProps> = (props: ListHeaderProps) => {
+
+  const onPress = () => {
+    props.onPress(props.model.id);
+  }
+
   return (
-    <View style={[
+    <TouchableOpacity onPress={onPress} style={[
       listStyles.listItem,
-      { borderLeftColor: model.categoryColor || 'transparent', borderLeftWidth: 15 }
+      { borderLeftColor: props.model.categoryColor || 'transparent', borderLeftWidth: 15 }
     ]}>
-      <Text style={listStyles.listItemTitle}>{model.name}</Text>
-      <Text style={listStyles.listItemCategory}>{model.categoryName}</Text>
-      <Text style={listStyles.listItemUpdateInfo}>
-        {`Ostatnio zaktualizowano: ${model.updateDate}`}
-      </Text>
-      <Text style={listStyles.listItemUpdateInfo}>{`Przez: ${model.updatedBy}`}</Text>
-    </View>
+      <View>
+        <Text style={listStyles.listItemTitle}>{props.model.name}</Text>
+        <Text style={listStyles.listItemCategory}>{props.model.categoryName}</Text>
+        <Text style={listStyles.listItemUpdateInfo}>
+          {`Ostatnio zaktualizowano: ${props.model.updateDate}`}
+        </Text>
+        <Text style={listStyles.listItemUpdateInfo}>{`Przez: ${props.model.updatedBy}`}</Text>
+      </View>
+    </TouchableOpacity>
   );
 };
 

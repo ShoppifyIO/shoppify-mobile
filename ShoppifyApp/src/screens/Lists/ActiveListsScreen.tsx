@@ -32,17 +32,16 @@ const ActiveListsScreen: React.FC = () => {
     setModalVisible(false);
   };
 
-  const onTouchEnd = (e: GestureResponderEvent) => {
-    console.log("e", e);
+  const onPress = (id: number) => {
+    console.log("selected id", id);
   }
 
   return (
     <View style={listStyles.container}>
       <FlatList
         data={lists}
-        renderItem={({ item }) => <ListHeader model={item} />}
+        renderItem={({ item }) => <ListHeader onPress={onPress} model={item} />}
         keyExtractor={(item) => item.id.toString()}
-        onTouchEnd={onTouchEnd}
       />
       <AddListButton onPress={addNewList} />
       <Modal
