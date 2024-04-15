@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View, Modal, Button, FlatList } from 'react-native';
-import EditListModal from '../../controls/ShoppingList/EditListModal'; 
+import { View, Modal, Button, FlatList, GestureResponderEvent } from 'react-native';
+import EditListModal from '../../controls/ShoppingList/EditListModal';
 import { ShoppingListHeader } from '../../models/shoppingListHeader';
 import { listStyles } from './listStyles';
 import ListHeader from './ListHeader';
@@ -23,14 +23,18 @@ const ActiveListsScreen: React.FC = () => {
       updatedBy: 'NowyUżytkownik',
       categoryColor: null,
     };
-    setCurrentList(newList); 
-    setModalVisible(true); 
+    setCurrentList(newList);
+    setModalVisible(true);
   };
 
   const saveList = (updatedList: ShoppingListHeader) => {
     setLists([updatedList, ...lists.filter(list => list.id !== updatedList.id)]);
-    setModalVisible(false); 
+    setModalVisible(false);
   };
+
+  const onTouchEnd = (e: GestureResponderEvent) => {
+    console.log("e", e);
+  }
 
   return (
     <View style={listStyles.container}>
@@ -38,13 +42,18 @@ const ActiveListsScreen: React.FC = () => {
         data={lists}
         renderItem={({ item }) => <ListHeader model={item} />}
         keyExtractor={(item) => item.id.toString()}
+        onTouchEnd={onTouchEnd}
       />
       <AddListButton onPress={addNewList} />
       <Modal
         visible={isModalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <EditListModal list={currentList} onSave={saveList} onClose={() => setModalVisible(false)} />
+        <EditListModal
+          list={currentList}
+          onSave={saveList}
+          onClose={() => setModalVisible(false)}
+        />
       </Modal>
     </View>
   );

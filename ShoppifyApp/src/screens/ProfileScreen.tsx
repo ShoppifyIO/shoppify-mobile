@@ -16,7 +16,7 @@ const ProfileScreen = (props: UserProfileScreenProps) => {
   return (
     <SafeAreaView style={userProfileStyles.profileSection}>
       <Image
-        source={require('./../../assets/profiles/bear.jpg')} // Zastąp ścieżką do zdjęcia profilowego
+        source={require('./../../assets/profiles/bear1.jpg')} 
         style={userProfileStyles.profileImage}
       />
       <Text style={userProfileStyles.usernameText}>BearBear</Text>
@@ -30,18 +30,17 @@ const ProfileScreen = (props: UserProfileScreenProps) => {
   );
 };
 
-// Dodajemy i dostosowujemy style specyficzne dla UserProfileScreen
 const userProfileStyles = StyleSheet.create({
   profileSection: {
-    alignItems: 'center', // Wyśrodkowanie zdjęcia i informacji o użytkowniku
+    alignItems: 'center', 
     paddingVertical: 20,
     flex: 1,
-    justifyContent: 'center', // Zapewnia, że treści są wyśrodkowane wertykalnie
+    justifyContent: 'center', 
   },
   profileImage: {
-    width: 170, // Dostosuj rozmiar według potrzeb
+    width: 170, 
     height: 170,
-    borderRadius: 75, // Ustawienie pełnego zaokrąglenia
+    borderRadius: 75, 
     marginBottom: 20,
   },
   usernameText: {
@@ -52,11 +51,11 @@ const userProfileStyles = StyleSheet.create({
   emailText: {
     fontSize: 16,
     color: '#333',
-    marginBottom: 30, // Dodatkowy margines, aby zapewnić odstęp od przycisku wylogowania
+    marginBottom: 30, 
   },
   logoutIcon: {
     position: 'absolute',
-    top: 30, // Dodanie marginesu, aby ikona nie nachodziła na pasek statusu
+    top: 30, 
     right: 20,
   },
 });
