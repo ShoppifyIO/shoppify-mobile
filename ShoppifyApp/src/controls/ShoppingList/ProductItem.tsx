@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { View, TextInput, StyleSheet, Dimensions } from 'react-native';
 import CustomCheckbox from '../../controls/CustomCheckbox';
 
@@ -8,20 +8,33 @@ interface ProductItemProps {
   onNameChange: (text: string) => void;
   onCompletedChange: (newValue: boolean) => void;
   onAddNewItem: () => void; 
+  autoFocus: boolean;
 }
 
 const ProductItem: React.FC<ProductItemProps> = (props: ProductItemProps) => {
+  const inputRef = useRef<TextInput>(null);
 
-    
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (props.autoFocus && inputRef.current) {
+        inputRef.current.focus();
+      }
+    }, 100);  // Lekkie opóźnienie może pomóc w synchronizacji
+  
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <View style={styles.itemContainer}>
       <TextInput
         style={styles.itemInput}
+        ref={inputRef}
         value={props.name}
         onChangeText={props.onNameChange}
         placeholder="Nazwa produktu"
         placeholderTextColor="#999" // Jasniejszy kolor dla placeholdera
         onSubmitEditing={props.onAddNewItem} 
+        autoFocus={props.autoFocus}  
       />
       <CustomCheckbox isChecked={props.isCompleted} onCheckChange={props.onCompletedChange} />
     </View>
@@ -37,10 +50,9 @@ const styles = StyleSheet.create({
   },
   itemInput: {
     flex: 1,
-    borderWidth: 1,
+    borderWidth: 0,
     borderColor: '#ccc',
     marginRight: 10,
-    padding: 10,
     borderRadius: 5,
     color: 'black', 
   },

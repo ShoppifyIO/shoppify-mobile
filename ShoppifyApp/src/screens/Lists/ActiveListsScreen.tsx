@@ -10,20 +10,10 @@ import { mockActiveLists } from '../../mocks/activeLists';
 const ActiveListsScreen: React.FC = () => {
   const [lists, setLists] = useState<ShoppingListHeader[]>(mockActiveLists);
   const [isModalVisible, setModalVisible] = useState(false);
-  const [currentList, setCurrentList] = useState<ShoppingListHeader | null>(null);
+  const [currentListId, setCurrentListId] = useState<number | null>(null);
 
   const addNewList = () => {
-    // Przykładowe domyślne dane nowej listy
-    const newList: ShoppingListHeader = {
-      id: lists.length + 1,
-      name: 'Nowa lista zakupów',
-      categoryName: 'Nowa kategoria',
-      ownerUsername: 'NowyUżytkownik',
-      updateDate: new Date().toISOString().slice(0, 10),
-      updatedBy: 'NowyUżytkownik',
-      categoryColor: null,
-    };
-    setCurrentList(newList);
+    setCurrentListId(-1);
     setModalVisible(true);
   };
 
@@ -34,6 +24,8 @@ const ActiveListsScreen: React.FC = () => {
 
   const onPress = (id: number) => {
     console.log("selected id", id);
+    setCurrentListId(id);
+    setModalVisible(true); 
   }
 
   return (
@@ -49,7 +41,7 @@ const ActiveListsScreen: React.FC = () => {
         onRequestClose={() => setModalVisible(false)}
       >
         <EditListModal
-          list={currentList}
+          listId={currentListId ?? -1}
           onSave={saveList}
           onClose={() => setModalVisible(false)}
         />
