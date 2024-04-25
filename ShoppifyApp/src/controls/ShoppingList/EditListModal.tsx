@@ -7,22 +7,21 @@ import { ShoppingListItem } from '../../models/shoppingListItem';
 
 interface EditListModalProps {
   listId: number;
-  onSave: (list: ShoppingList) => void;
+  editMode?: boolean;
 }
 
-const EditListModal: React.FC<EditListModalProps> = ({ listId, onSave }) => {
+const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) => {
   const [name, setName] = useState<string>('');
   const [list, setList] = useState<ShoppingList>(newShoppingList);
-  const [editMode, setEditMode] = useState<boolean>(false);
+  const [editMode, setEditMode] = useState<boolean>(props.editMode ?? false);
   const nameInputRef = useRef<TextInput>(null);
 
   useEffect(() => {
-    if (listId !== -1) {
-      const fetchedList = getList(listId);
-      setList(fetchedList);
-      setName(fetchedList.name);
-    }
-  }, [listId]);
+    const fetchedList = getList(props.listId);
+    setList(fetchedList);
+    setName(fetchedList.name);
+
+  }, [props.listId, editMode]);
 
   const handleItemChange = (item: ShoppingListItem, index: number) => {
     const newItems = [...list.items];
@@ -44,7 +43,7 @@ const EditListModal: React.FC<EditListModalProps> = ({ listId, onSave }) => {
   };
 
   const handleSave = () => {
-    onSave(list);
+    console.log("save");
     setEditMode(false);
   };
 
@@ -73,19 +72,20 @@ const EditListModal: React.FC<EditListModalProps> = ({ listId, onSave }) => {
             <TouchableOpacity style={styles.icon} onPress={() => setEditMode(true)}>
               <Ionicons name="pencil" size={24} color="gray" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.star} onPress={() => {}}>
+            <TouchableOpacity style={styles.star} onPress={() => { }}>
               <Ionicons name="star" size={24} color="gray" />
             </TouchableOpacity>
           </>
         )}
       </View>
-      {editMode && (
-                <>
-                {list.items.length === 0 && (
-                  <TouchableOpacity style={styles.button} onPress={addItem}>
-                    <Text style={styles.buttonText}>Let's go!</Text>
-                  </TouchableOpacity>
-                )}
+
+      <>
+        {editMode && list.items.length === 0 &&
+
+          <TouchableOpacity style={styles.button} onPress={addItem}>
+            <Text style={styles.buttonText}>Let's go!</Text>
+          </TouchableOpacity>
+        }
         <FlatList
           data={list.items}
           renderItem={({ item, index }) => (
@@ -100,8 +100,7 @@ const EditListModal: React.FC<EditListModalProps> = ({ listId, onSave }) => {
           )}
           keyExtractor={(_, index) => index.toString()}
         />
-        </>
-      )}
+      </>
     </View>
   );
 };
@@ -134,9 +133,9 @@ const styles = StyleSheet.create({
   },
   star: {
     position: 'absolute',
-    top: 10 
-   },
-   saveIcon: {
+    top: 10
+  },
+  saveIcon: {
     position: 'absolute',
     right: 35,
     top: 10
@@ -152,7 +151,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     marginTop: 10,
-    marginBottom: 10,  
+    marginBottom: 10,
   },
   buttonText: {
     color: "white",
@@ -161,9 +160,22 @@ const styles = StyleSheet.create({
 
 export default EditListModal;
 
-function getList(id: number): ShoppingList {
-  return newShoppingList;
-}
+const exampleShoppingList: ShoppingList = {
+  id: 1,
+  name: 'Tygodniowe zakupy',
+  categoryName: 'Spożywcze',
+  categoryColor: '#FFD700',  // Złoty kolor dla kategorii spożywczych
+  ownerUsername: 'JanKowalski',
+  updateDate: new Date().toISOString().slice(0, 10),
+  updatedBy: 'JanKowalski',
+  items: [
+    { name: 'Chleb', isCompleted: false },
+    { name: 'Mleko', isCompleted: true },
+    { name: 'Jajka', isCompleted: false },
+    { name: 'Ser żółty', isCompleted: false },
+    { name: 'Masło', isCompleted: true }
+  ]
+};
 
 const newShoppingList: ShoppingList = {
   id: -1,
@@ -175,3 +187,12 @@ const newShoppingList: ShoppingList = {
   categoryColor: null,
   items: []
 };
+
+function getList(id: number): ShoppingList {
+  console.log("id", id);
+  if (id > 0) {
+    console.log("here");
+    return exampleShoppingList;
+  }
+  return newShoppingList;
+}

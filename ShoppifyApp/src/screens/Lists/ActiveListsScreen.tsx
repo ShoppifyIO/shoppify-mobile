@@ -42,7 +42,7 @@ const ActiveListsScreen: React.FC = () => {
       >
         <EditListModal
           listId={currentListId ?? -1}
-          onSave={saveList}
+          editMode={currentListId == -1}
         />
       </Modal>
     </View>
