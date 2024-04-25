@@ -116,6 +116,7 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
               onAddNewItem={addItem}
               readOnly={!editMode}
               checkDisabled={completed}
+              isOdd={index % 2 == 1}
             />
           )}
           keyExtractor={(_, index) => index.toString()}
