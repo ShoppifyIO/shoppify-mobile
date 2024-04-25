@@ -184,7 +184,22 @@ const exampleShoppingList: ShoppingList = {
     { name: 'Mleko', isCompleted: true },
     { name: 'Jajka', isCompleted: false },
     { name: 'Ser żółty', isCompleted: false },
-    { name: 'Masło', isCompleted: true }
+    { name: 'Masło', isCompleted: true },
+    { name: 'Pomidory', isCompleted: false },
+    { name: 'Ziemniaki', isCompleted: false },
+    { name: 'Jabłka', isCompleted: false },
+    { name: 'Cebula', isCompleted: true },
+    { name: 'Kawa', isCompleted: false },
+    { name: 'Herbata', isCompleted: true },
+    { name: 'Cukier', isCompleted: false },
+    { name: 'Mąka', isCompleted: false },
+    { name: 'Ryż', isCompleted: false },
+    { name: 'Makaron', isCompleted: true },
+    { name: 'Olej słonecznikowy', isCompleted: false },
+    { name: 'Papier toaletowy', isCompleted: true },
+    { name: 'Szampon', isCompleted: false },
+    { name: 'Mydło', isCompleted: true },
+    { name: 'Pasta do zębów', isCompleted: false }
   ]
 };
 
