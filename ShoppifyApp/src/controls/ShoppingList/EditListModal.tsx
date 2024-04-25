@@ -36,7 +36,16 @@ const EditListModal: React.FC<EditListModalProps> = ({ listId, onSave }) => {
       ...previousList,
       items: [newItem, ...previousList.items]
     }));
-    setEditMode(true);
+  };
+
+  const handleCancel = () => {
+    console.log("cancel");
+    setEditMode(false);
+  };
+
+  const handleSave = () => {
+    onSave(list);
+    setEditMode(false);
   };
 
   return (
@@ -48,43 +57,55 @@ const EditListModal: React.FC<EditListModalProps> = ({ listId, onSave }) => {
           onChangeText={setName}
           placeholder="Nazwa listy"
           ref={nameInputRef}
+          readOnly={!editMode}
         />
-        <TouchableOpacity 
-          style={styles.icon}
-          onPress={() => setEditMode(!editMode)}
-        >
-          <Ionicons name={editMode ? "checkmark" : "pencil"} size={24} color="gray" />
-        </TouchableOpacity>
+        {editMode ? (
+          <>
+            <TouchableOpacity style={styles.saveIcon} onPress={handleSave}>
+              <Ionicons name="checkmark" size={24} color="gray" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.cancelIcon} onPress={handleCancel}>
+              <Ionicons name="close" size={24} color="gray" />
+            </TouchableOpacity>
+          </>
+        ) : (
+          <>
+            <TouchableOpacity style={styles.icon} onPress={() => setEditMode(true)}>
+              <Ionicons name="pencil" size={24} color="gray" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.star} onPress={() => {}}>
+              <Ionicons name="star" size={24} color="gray" />
+            </TouchableOpacity>
+          </>
+        )}
       </View>
       {editMode && (
-        <>
-          {list.items.length === 0 && (
-            <TouchableOpacity style={styles.button} onPress={addItem}>
-              <Text style={styles.buttonText}>Let's go!</Text>
-            </TouchableOpacity>
+                <>
+                {list.items.length === 0 && (
+                  <TouchableOpacity style={styles.button} onPress={addItem}>
+                    <Text style={styles.buttonText}>Let's go!</Text>
+                  </TouchableOpacity>
+                )}
+        <FlatList
+          data={list.items}
+          renderItem={({ item, index }) => (
+            <ProductItem
+              name={item.name}
+              isCompleted={item.isCompleted}
+              onNameChange={(text) => handleItemChange({ ...item, name: text }, index)}
+              onCompletedChange={(newValue) => handleItemChange({ ...item, isCompleted: newValue }, index)}
+              onAddNewItem={addItem}
+              autoFocus={index === 0}
+            />
           )}
-          <FlatList
-            data={list.items}
-            renderItem={({ item, index }) => (
-              <ProductItem
-                name={item.name}
-                isCompleted={item.isCompleted}
-                onNameChange={(text) => handleItemChange({ ...item, name: text }, index)}
-                onCompletedChange={(newValue) => handleItemChange({ ...item, isCompleted: newValue }, index)}
-                onAddNewItem={addItem}
-                autoFocus={index === 0}
-              />
-            )}
-            keyExtractor={(_, index) => index.toString()}
-          />
-          <TouchableOpacity style={styles.button} onPress={() => onSave(list)}>
-            <Text style={styles.buttonText}>Zapisz</Text>
-          </TouchableOpacity>
+          keyExtractor={(_, index) => index.toString()}
+        />
         </>
       )}
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
@@ -109,6 +130,20 @@ const styles = StyleSheet.create({
   icon: {
     position: 'absolute',
     right: 10,
+    top: 10
+  },
+  star: {
+    position: 'absolute',
+    top: 10 
+   },
+   saveIcon: {
+    position: 'absolute',
+    right: 35,
+    top: 10
+  },
+  cancelIcon: {
+    position: 'absolute',
+    right: 1,
     top: 10
   },
   button: {
