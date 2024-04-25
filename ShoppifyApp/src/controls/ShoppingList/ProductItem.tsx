@@ -22,7 +22,7 @@ const ProductItem: React.FC<ProductItemProps> = (props: ProductItemProps) => {
     }, 100);  // Lekkie opóźnienie może pomóc w synchronizacji
   
     return () => clearTimeout(timer);
-  }, []);
+  }, [props.autoFocus, props.name]);
 
   return (
     <View style={styles.itemContainer}>

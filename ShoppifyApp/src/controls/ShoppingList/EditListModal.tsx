@@ -72,7 +72,7 @@ const EditListModal: React.FC<EditListModalProps> = ({ listId, onSave }) => {
                 onNameChange={(text) => handleItemChange({ ...item, name: text }, index)}
                 onCompletedChange={(newValue) => handleItemChange({ ...item, isCompleted: newValue }, index)}
                 onAddNewItem={addItem}
-                autoFocus={index === -1}
+                autoFocus={index === 0}
               />
             )}
             keyExtractor={(_, index) => index.toString()}
