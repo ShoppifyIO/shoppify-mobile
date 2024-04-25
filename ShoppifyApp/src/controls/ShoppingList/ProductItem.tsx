@@ -9,6 +9,7 @@ interface ProductItemProps {
   onCompletedChange: (newValue: boolean) => void;
   onAddNewItem: () => void; 
   readOnly: boolean;
+  checkDisabled: boolean;
 }
 
 const ProductItem: React.FC<ProductItemProps> = (props: ProductItemProps) => {
@@ -36,7 +37,7 @@ const ProductItem: React.FC<ProductItemProps> = (props: ProductItemProps) => {
         onSubmitEditing={props.onAddNewItem} 
         readOnly={props.readOnly} 
       />
-      <CustomCheckbox isChecked={props.isCompleted} onCheckChange={props.onCompletedChange} />
+      <CustomCheckbox disabled={props.checkDisabled} isChecked={props.isCompleted} onCheckChange={props.onCompletedChange} />
     </View>
   );
 };

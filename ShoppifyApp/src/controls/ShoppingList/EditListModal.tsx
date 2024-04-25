@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import ProductItem from './ProductItem';
 import { ShoppingList } from '../../models/list';
 import { ShoppingListItem } from '../../models/shoppingListItem';
+import ConfettiCannon from 'react-native-confetti-cannon';
 
 interface EditListModalProps {
   listId: number;
@@ -14,7 +15,8 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
   const [name, setName] = useState<string>('');
   const [list, setList] = useState<ShoppingList>(newShoppingList);
   const [editMode, setEditMode] = useState<boolean>(props.editMode ?? false);
-  const nameInputRef = useRef<TextInput>(null);
+  const [completed, setCompleted] = useState(false);
+  const confettiRef = useRef<ConfettiCannon>(null);
 
   useEffect(() => {
     const fetchedList = getList(props.listId);
@@ -25,7 +27,7 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
 
   useEffect(() => {
     if (editMode && list.items.length > 0) {
-      addItem(); 
+      addItem();
     }
   }, [editMode]);
 
@@ -36,12 +38,19 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
   };
 
   const addItem = () => {
-    if ( list.items[0]?.name !== "") {
+    if (list.items[0]?.name !== "") {
       const newItem = { name: '', isCompleted: false };
       setList(previousList => ({
         ...previousList,
         items: [newItem, ...previousList.items]
       }));
+    }
+  };
+
+  const handleCompletion = () => {
+    setCompleted(!completed);
+    if (!completed && confettiRef.current) {
+      confettiRef.current.start();
     }
   };
 
@@ -56,32 +65,31 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
   };
 
   return (
-    <View style={styles.modalContainer}>
+    <View style={[styles.modalContainer, { backgroundColor: completed ? '#f0f0f0' : 'white' }]}>
       <View style={styles.header}>
         <TextInput
           style={styles.input}
           value={name}
           onChangeText={setName}
           placeholder="Nazwa listy"
-          ref={nameInputRef}
           readOnly={!editMode}
         />
         {editMode ? (
           <>
             <TouchableOpacity style={styles.saveIcon} onPress={handleSave}>
-              <Ionicons name="checkmark" size={24} color="gray" />
+              <Ionicons name="checkmark" size={32} color="gray" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.cancelIcon} onPress={handleCancel}>
-              <Ionicons name="close" size={24} color="gray" />
+              <Ionicons name="close" size={32} color="gray" />
             </TouchableOpacity>
           </>
         ) : (
           <>
             <TouchableOpacity style={styles.icon} onPress={() => setEditMode(true)}>
-              <Ionicons name="pencil" size={24} color="gray" />
+              <Ionicons name="pencil" size={28} color="gray" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.star} onPress={() => { }}>
-              <Ionicons name="star" size={24} color="gray" />
+            <TouchableOpacity style={styles.star} onPress={handleCompletion}>
+              <Ionicons name={completed ? "checkmark-circle" : "checkmark-circle-outline"} size={completed ? 48 : 28} color={completed ? "#A7C7E7" : "gray"} />
             </TouchableOpacity>
           </>
         )}
@@ -90,9 +98,9 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
       <>
         {editMode && list.items.length === 0 &&
 
-          <TouchableOpacity 
-          style={styles.button} 
-          onPress={addItem}
+          <TouchableOpacity
+            style={styles.button}
+            onPress={addItem}
           >
             <Text style={styles.buttonText}>Let's go!</Text>
           </TouchableOpacity>
@@ -107,11 +115,24 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
               onCompletedChange={(newValue) => handleItemChange({ ...item, isCompleted: newValue }, index)}
               onAddNewItem={addItem}
               readOnly={!editMode}
+              checkDisabled={completed}
             />
           )}
           keyExtractor={(_, index) => index.toString()}
         />
       </>
+      {completed && <ConfettiCannon
+        count={200}
+        origin={{ x: -10, y: 0 }}
+        explosionSpeed={1000}
+        fallSpeed={5000}
+        colors={CONFETTI_COLORS}
+        fadeOut={true}
+        ref={confettiRef}
+      />
+
+      }
+
     </View>
   );
 };
@@ -170,6 +191,17 @@ const styles = StyleSheet.create({
 });
 
 export default EditListModal;
+
+const CONFETTI_COLORS: string[] = [
+  "#00BFFF", // Deep Sky Blue: A vivid, bright blue.
+  "#FF69B4", // Hot Pink: A striking and bright pink.
+  "#9370DB", // Medium Purple: A vibrant, yet not overly bright, purple.
+  "#FF6347", // Tomato: A vivid red-orange.
+  "#FFD700", // Gold: A bright and shiny gold.
+  "#32CD32", // Lime Green: A bright and lively green.
+  "#FFA500", // Orange: A pure, bright orange.
+  "#40E0D0"  // Turquoise: A vibrant and energetic turquoise.
+];
 
 const exampleShoppingList: ShoppingList = {
   id: 1,
