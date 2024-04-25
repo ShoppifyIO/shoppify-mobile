@@ -23,6 +23,12 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
 
   }, [props.listId, editMode]);
 
+  useEffect(() => {
+    if (editMode && list.items.length > 0) {
+      addItem(); 
+    }
+  }, [editMode]);
+
   const handleItemChange = (item: ShoppingListItem, index: number) => {
     const newItems = [...list.items];
     newItems[index] = item;
@@ -30,11 +36,13 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
   };
 
   const addItem = () => {
-    const newItem = { name: '', isCompleted: false };
-    setList(previousList => ({
-      ...previousList,
-      items: [newItem, ...previousList.items]
-    }));
+    if ( list.items[0]?.name !== "") {
+      const newItem = { name: '', isCompleted: false };
+      setList(previousList => ({
+        ...previousList,
+        items: [newItem, ...previousList.items]
+      }));
+    }
   };
 
   const handleCancel = () => {
@@ -82,7 +90,10 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
       <>
         {editMode && list.items.length === 0 &&
 
-          <TouchableOpacity style={styles.button} onPress={addItem}>
+          <TouchableOpacity 
+          style={styles.button} 
+          onPress={addItem}
+          >
             <Text style={styles.buttonText}>Let's go!</Text>
           </TouchableOpacity>
         }
@@ -95,7 +106,6 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
               onNameChange={(text) => handleItemChange({ ...item, name: text }, index)}
               onCompletedChange={(newValue) => handleItemChange({ ...item, isCompleted: newValue }, index)}
               onAddNewItem={addItem}
-              autoFocus={index === 0}
               readOnly={!editMode}
             />
           )}

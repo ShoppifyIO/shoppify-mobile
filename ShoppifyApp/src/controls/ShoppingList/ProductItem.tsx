@@ -8,7 +8,6 @@ interface ProductItemProps {
   onNameChange: (text: string) => void;
   onCompletedChange: (newValue: boolean) => void;
   onAddNewItem: () => void; 
-  autoFocus: boolean;
   readOnly: boolean;
 }
 
@@ -17,13 +16,13 @@ const ProductItem: React.FC<ProductItemProps> = (props: ProductItemProps) => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (props.autoFocus && inputRef.current) {
+      if (props.name == '' && inputRef.current) {
         inputRef.current.focus();
       }
-    }, 100);  // Lekkie opóźnienie może pomóc w synchronizacji
+    }, 100);
   
     return () => clearTimeout(timer);
-  }, [props.autoFocus, props.name]);
+  }, [props.name]);
 
   return (
     <View style={styles.itemContainer}>
@@ -35,7 +34,6 @@ const ProductItem: React.FC<ProductItemProps> = (props: ProductItemProps) => {
         placeholder="Nazwa produktu"
         placeholderTextColor="#999" // Jasniejszy kolor dla placeholdera
         onSubmitEditing={props.onAddNewItem} 
-        autoFocus={props.autoFocus} 
         readOnly={props.readOnly} 
       />
       <CustomCheckbox isChecked={props.isCompleted} onCheckChange={props.onCompletedChange} />
