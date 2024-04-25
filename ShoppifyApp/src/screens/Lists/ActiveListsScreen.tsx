@@ -43,7 +43,6 @@ const ActiveListsScreen: React.FC = () => {
         <EditListModal
           listId={currentListId ?? -1}
           onSave={saveList}
-          onClose={() => setModalVisible(false)}
         />
       </Modal>
     </View>
