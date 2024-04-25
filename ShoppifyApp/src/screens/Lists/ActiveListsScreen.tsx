@@ -23,7 +23,6 @@ const ActiveListsScreen: React.FC = () => {
   };
 
   const onPress = (id: number) => {
-    console.log("selected id", id);
     setCurrentListId(id);
     setModalVisible(true); 
   }

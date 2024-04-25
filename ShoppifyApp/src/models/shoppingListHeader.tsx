@@ -8,4 +8,5 @@ export interface ShoppingListHeader {
     ownerUsername: string;
     updateDate: string;
     updatedBy: string;
+    completed: boolean;
 }

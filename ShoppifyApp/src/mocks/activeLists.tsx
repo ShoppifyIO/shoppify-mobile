@@ -9,6 +9,7 @@ export const mockActiveLists: ShoppingListHeader[] = [
         ownerUsername: 'julia88',
         updateDate: '2024-04-12',
         updatedBy: 'julia88',
+        completed: false,
     },
     {
         id: 2,
@@ -18,6 +19,8 @@ export const mockActiveLists: ShoppingListHeader[] = [
         ownerUsername: 'marko',
         updateDate: '2024-04-10',
         updatedBy: 'anetkaB',
+        completed: false,
+
     },
     {
         id: 3,
@@ -27,6 +30,8 @@ export const mockActiveLists: ShoppingListHeader[] = [
         ownerUsername: 'runnerEwa',
         updateDate: '2024-04-08',
         updatedBy: 'tommyR',
+        completed: false,
+
     },
     {
         id: 4,
@@ -36,6 +41,8 @@ export const mockActiveLists: ShoppingListHeader[] = [
         ownerUsername: 'fisherKris',
         updateDate: '2024-04-07',
         updatedBy: 'fisherKris',
+        completed: false,
+
     },
     {
         id: 5,
@@ -45,6 +52,7 @@ export const mockActiveLists: ShoppingListHeader[] = [
         ownerUsername: 'aniaS',
         updateDate: '2024-04-05',
         updatedBy: 'piotrWaves',
+        completed: false,
     },
     {
         id: 6,
@@ -54,6 +62,7 @@ export const mockActiveLists: ShoppingListHeader[] = [
         ownerUsername: 'beerMarcin',
         updateDate: '2024-04-04',
         updatedBy: 'beerMarcin',
+        completed: false,
     },
     {
         id: 7,
@@ -63,6 +72,8 @@ export const mockActiveLists: ShoppingListHeader[] = [
         ownerUsername: 'coffeeLover',
         updateDate: '2024-04-03',
         updatedBy: 'teaMaster',
+        completed: false,
+
     },
     {
         id: 8,
@@ -72,6 +83,8 @@ export const mockActiveLists: ShoppingListHeader[] = [
         ownerUsername: 'techGuy',
         updateDate: '2024-04-02',
         updatedBy: 'gadgetGal',
+        completed: false,
+
     },
     {
         id: 9,
@@ -81,6 +94,8 @@ export const mockActiveLists: ShoppingListHeader[] = [
         ownerUsername: 'greenThumb',
         updateDate: '2024-04-01',
         updatedBy: 'plantLady',
+        completed: false,
+
     },
     {
         id: 10,
@@ -90,6 +105,8 @@ export const mockActiveLists: ShoppingListHeader[] = [
         ownerUsername: 'bookWorm',
         updateDate: '2024-03-31',
         updatedBy: 'chefInTraining',
+        completed: false,
+
     },
     {
         id: 11,
@@ -99,6 +116,8 @@ export const mockActiveLists: ShoppingListHeader[] = [
         ownerUsername: 'photoFan',
         updateDate: '2024-03-30',
         updatedBy: 'shutterbug',
+        completed: false,
+
     },
     {
         id: 12,
@@ -108,6 +127,8 @@ export const mockActiveLists: ShoppingListHeader[] = [
         ownerUsername: 'artLover',
         updateDate: '2024-03-29',
         updatedBy: 'painterPro',
+        completed: false,
+
     },
     {
         id: 13,
@@ -117,6 +138,8 @@ export const mockActiveLists: ShoppingListHeader[] = [
         ownerUsername: 'carCareCarl',
         updateDate: '2024-03-28',
         updatedBy: 'autoAficionado',
+        completed: false,
+
     },
     {
         id: 14,
@@ -126,6 +149,8 @@ export const mockActiveLists: ShoppingListHeader[] = [
         ownerUsername: 'techGeek',
         updateDate: '2024-03-27',
         updatedBy: 'gadgetGuru',
+        completed: false,
+
     },
     {
         id: 15,
@@ -135,5 +160,7 @@ export const mockActiveLists: ShoppingListHeader[] = [
         ownerUsername: 'plantParent',
         updateDate: '2024-03-26',
         updatedBy: 'greenThumb',
+        completed: false,
+
     }
 ];
