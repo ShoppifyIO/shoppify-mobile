@@ -31,14 +31,12 @@ const EditListModal: React.FC<EditListModalProps> = ({ listId, onSave }) => {
   };
 
   const addItem = () => {
-    const lastItem = list.items[0];
-    if (!lastItem || lastItem.name.trim() !== '') {
-      const newItem = { name: '', isCompleted: false };
-      setList(previousList => ({
-        ...previousList,
-        items: [newItem, ...previousList.items]
-      }));
-    }
+    const newItem = { name: '', isCompleted: false };
+    setList(previousList => ({
+      ...previousList,
+      items: [newItem, ...previousList.items]
+    }));
+    setEditMode(true);
   };
 
   return (
@@ -60,9 +58,11 @@ const EditListModal: React.FC<EditListModalProps> = ({ listId, onSave }) => {
       </View>
       {editMode && (
         <>
-          <TouchableOpacity style={styles.button} onPress={addItem}>
-            <Text style={styles.buttonText}>Dodaj produkt</Text>
-          </TouchableOpacity>
+          {list.items.length === 0 && (
+            <TouchableOpacity style={styles.button} onPress={addItem}>
+              <Text style={styles.buttonText}>Let's go!</Text>
+            </TouchableOpacity>
+          )}
           <FlatList
             data={list.items}
             renderItem={({ item, index }) => (
@@ -85,7 +85,6 @@ const EditListModal: React.FC<EditListModalProps> = ({ listId, onSave }) => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
@@ -118,7 +117,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     marginTop: 10,
-    marginBottom: 10,  // Dodano margines dolny dla przycisku
+    marginBottom: 10,  
   },
   buttonText: {
     color: "white",
