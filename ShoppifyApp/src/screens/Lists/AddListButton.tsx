@@ -1,4 +1,3 @@
-// AddListButton.tsx
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 
@@ -23,7 +22,7 @@ const styles = StyleSheet.create({  addButton: {
     borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#5067FF',
+    backgroundColor: '#A7C7E7',
   },
   text: {
     color: '#fff',
