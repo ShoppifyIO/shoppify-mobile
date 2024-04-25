@@ -96,6 +96,7 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
               onCompletedChange={(newValue) => handleItemChange({ ...item, isCompleted: newValue }, index)}
               onAddNewItem={addItem}
               autoFocus={index === 0}
+              readOnly={!editMode}
             />
           )}
           keyExtractor={(_, index) => index.toString()}

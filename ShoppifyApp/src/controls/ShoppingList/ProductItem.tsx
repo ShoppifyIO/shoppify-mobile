@@ -9,6 +9,7 @@ interface ProductItemProps {
   onCompletedChange: (newValue: boolean) => void;
   onAddNewItem: () => void; 
   autoFocus: boolean;
+  readOnly: boolean;
 }
 
 const ProductItem: React.FC<ProductItemProps> = (props: ProductItemProps) => {
@@ -34,7 +35,8 @@ const ProductItem: React.FC<ProductItemProps> = (props: ProductItemProps) => {
         placeholder="Nazwa produktu"
         placeholderTextColor="#999" // Jasniejszy kolor dla placeholdera
         onSubmitEditing={props.onAddNewItem} 
-        autoFocus={props.autoFocus}  
+        autoFocus={props.autoFocus} 
+        readOnly={props.readOnly} 
       />
       <CustomCheckbox isChecked={props.isCompleted} onCheckChange={props.onCompletedChange} />
     </View>
