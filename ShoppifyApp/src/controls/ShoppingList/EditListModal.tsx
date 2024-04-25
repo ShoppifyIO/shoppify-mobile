@@ -10,19 +10,19 @@ interface EditListModalProps {
   onSave: (list: ShoppingList) => void;
 }
 
-const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) => {
+const EditListModal: React.FC<EditListModalProps> = ({ listId, onSave }) => {
   const [name, setName] = useState<string>('');
   const [list, setList] = useState<ShoppingList>(newShoppingList);
   const [editMode, setEditMode] = useState<boolean>(false);
   const nameInputRef = useRef<TextInput>(null);
 
   useEffect(() => {
-    if (props.listId !== -1) {
-      const fetchedList = getList(props.listId);
+    if (listId !== -1) {
+      const fetchedList = getList(listId);
       setList(fetchedList);
       setName(fetchedList.name);
     }
-  }, [props.listId]);
+  }, [listId]);
 
   const handleItemChange = (item: ShoppingListItem, index: number) => {
     const newItems = [...list.items];
@@ -60,6 +60,9 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
       </View>
       {editMode && (
         <>
+          <TouchableOpacity style={styles.button} onPress={addItem}>
+            <Text style={styles.buttonText}>Dodaj produkt</Text>
+          </TouchableOpacity>
           <FlatList
             data={list.items}
             renderItem={({ item, index }) => (
@@ -73,13 +76,8 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
               />
             )}
             keyExtractor={(_, index) => index.toString()}
-            ListFooterComponent={
-              <TouchableOpacity style={styles.button} onPress={addItem}>
-                <Text style={styles.buttonText}>Dodaj produkt</Text>
-              </TouchableOpacity>
-            }
           />
-          <TouchableOpacity style={styles.button} onPress={() => props.onSave(list)}>
+          <TouchableOpacity style={styles.button} onPress={() => onSave(list)}>
             <Text style={styles.buttonText}>Zapisz</Text>
           </TouchableOpacity>
         </>
@@ -87,6 +85,7 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
@@ -105,25 +104,21 @@ const styles = StyleSheet.create({
     flex: 1,
     borderWidth: 0,
     padding: 10,
-    fontSize: 20, // Zwiększona czcionka
-    textAlign: 'center', // Wyśrodkowanie tekstu
+    fontSize: 20,
+    textAlign: 'center',
   },
   icon: {
     position: 'absolute',
     right: 10,
     top: 10
   },
-  buttonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-    marginTop: 20,
-  },
   button: {
     backgroundColor: '#505168',
     borderRadius: 25,
     paddingVertical: 10,
     paddingHorizontal: 20,
+    marginTop: 10,
+    marginBottom: 10,  // Dodano margines dolny dla przycisku
   },
   buttonText: {
     color: "white",
