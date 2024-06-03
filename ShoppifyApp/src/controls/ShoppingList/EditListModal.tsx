@@ -96,7 +96,7 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
               <Ionicons name="pencil" size={28} color="gray" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.icon} onPress={() => setShareModalVisible(true)}>
-              <Ionicons name="share-outline" size={28} color="gray" />
+              <Ionicons name="share-social-outline" size={28} color="gray" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.star} onPress={handleCompletion}>
               <Ionicons name={completed ? "checkmark-circle" : "checkmark-circle-outline"} size={completed ? 48 : 28} color={completed ? "#A7C7E7" : "gray"} />
