@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, Modal, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Modal, TouchableOpacity, StyleSheet, FlatList, Image } from 'react-native';
 import { Friend } from '../models/friend';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -12,6 +12,12 @@ interface FriendsShareModalProps {
 
 const FriendsShareModal: React.FC<FriendsShareModalProps> = ({ visible, onClose, onShareConfirmed, friends }) => {
     const [selectedFriends, setSelectedFriends] = useState<Friend[]>([]);
+
+    useEffect(() => {
+        if (visible) {
+            setSelectedFriends([]);
+        }
+    }, [visible]);
 
     const handleShare = () => {
         onShareConfirmed(selectedFriends);
@@ -41,10 +47,17 @@ const FriendsShareModal: React.FC<FriendsShareModalProps> = ({ visible, onClose,
                     keyExtractor={(item) => item.id.toString()}
                     renderItem={({ item }) => (
                         <TouchableOpacity
-                            style={[styles.friendItem, selectedFriends.some(selected => selected.id === item.id) && styles.friendItemSelected]}
+                            style={[
+                                styles.friendItem, 
+                                selectedFriends.some(selected => selected.id === item.id) && styles.friendItemSelected
+                            ]}
                             onPress={() => toggleFriendSelection(item)}
                         >
-                            <Text style={styles.friendName}>{item.name}</Text>
+                            <Image source={item.image} style={styles.friendImage} />
+                            <View style={styles.friendInfo}>
+                                <Text style={styles.friendName}>{item.name}</Text>
+                                <Text style={styles.friendEmail}>{item.email}</Text>
+                            </View>
                             {selectedFriends.some(selected => selected.id === item.id) && (
                                 <Ionicons name="checkmark" size={20} color="green" style={styles.checkmarkIcon} />
                             )}
@@ -84,13 +97,27 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: '#ddd',
         width: '100%',
+        backgroundColor: '#fff',
     },
     friendItemSelected: {
         backgroundColor: '#e0f7fa',
     },
-    friendName: {
+    friendImage: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        marginRight: 15,
+    },
+    friendInfo: {
         flex: 1,
+        flexDirection: 'column',
+    },
+    friendName: {
         fontSize: 16,
+    },
+    friendEmail: {
+        fontSize: 14,
+        color: 'gray',
     },
     checkmarkIcon: {
         marginLeft: 10,
