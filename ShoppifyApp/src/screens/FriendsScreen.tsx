@@ -1,20 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ListRenderItemInfo, ImageSourcePropType, SafeAreaView } from 'react-native';
-
-interface Friend {
-  id: string;
-  name: string;
-  image: ImageSourcePropType;
-  email: string; 
-}
-
-const friendsData: Friend[] = [
-  { id: '1', name: 'Alice', image: require('./../../assets/profiles/kitty.jpg'), email: 'alice@example.com' },
-  { id: '2', name: 'Bob', image: require('./../../assets/profiles/bear2.jpg'), email: 'bob@example.com' },
-  { id: '3', name: 'Charlie', image: require('./../../assets/profiles/squirrel.jpg'), email: 'charlie@example.com' },
-  { id: '4', name: 'Will', image: require('./../../assets/profiles/bear4.jpg'), email: 'will@example.com' },
-  { id: '5', name: 'Rea', image: require('./../../assets/profiles/rabbit.jpg'), email: 'rea@example.com' },
-];
+import { friendsMockData } from '../mocks/friendList';
+import { Friend } from '../models/friend';
 
 const FriendsScreen = () => {
   const renderFriend = ({ item }: ListRenderItemInfo<Friend>) => (
@@ -30,7 +17,7 @@ const FriendsScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={friendsData}
+        data={friendsMockData}
         renderItem={renderFriend}
         keyExtractor={item => item.id}
       />

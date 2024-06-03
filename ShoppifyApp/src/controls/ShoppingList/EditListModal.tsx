@@ -5,6 +5,9 @@ import ProductItem from './ProductItem';
 import { ShoppingList } from '../../models/list';
 import { ShoppingListItem } from '../../models/shoppingListItem';
 import ConfettiCannon from 'react-native-confetti-cannon';
+import { friendsMockData } from '../../mocks/friendList';
+import { Friend } from '../../models/friend';
+import FriendsShareModal from '../FriendShareModal';
 
 interface EditListModalProps {
   listId: number;
@@ -16,13 +19,13 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
   const [list, setList] = useState<ShoppingList>(newShoppingList);
   const [editMode, setEditMode] = useState<boolean>(props.editMode ?? false);
   const [completed, setCompleted] = useState(false);
+  const [isShareModalVisible, setShareModalVisible] = useState(false);
   const confettiRef = useRef<ConfettiCannon>(null);
 
   useEffect(() => {
     const fetchedList = getList(props.listId);
     setList(fetchedList);
     setName(fetchedList.name);
-
   }, [props.listId, editMode]);
 
   useEffect(() => {
@@ -64,6 +67,10 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
     setEditMode(false);
   };
 
+  const handleShareConfirmed = (selectedFriends: Friend[]) => {
+    console.log('List shared with:', selectedFriends);
+  };
+
   return (
     <View style={[styles.modalContainer, { backgroundColor: completed ? '#f0f0f0' : 'white' }]}>
       <View style={styles.header}>
@@ -72,39 +79,38 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
           value={name}
           onChangeText={setName}
           placeholder="Nazwa listy"
-          readOnly={!editMode}
+          editable={editMode}
         />
         {editMode ? (
-          <>
+          <View style={styles.iconContainer}>
             <TouchableOpacity style={styles.saveIcon} onPress={handleSave}>
               <Ionicons name="checkmark" size={32} color="gray" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.cancelIcon} onPress={handleCancel}>
               <Ionicons name="close" size={32} color="gray" />
             </TouchableOpacity>
-          </>
+          </View>
         ) : (
-          <>
+          <View style={styles.iconContainer}>
             <TouchableOpacity style={styles.icon} onPress={() => setEditMode(true)}>
               <Ionicons name="pencil" size={28} color="gray" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.icon} onPress={() => setShareModalVisible(true)}>
+              <Ionicons name="share-outline" size={28} color="gray" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.star} onPress={handleCompletion}>
               <Ionicons name={completed ? "checkmark-circle" : "checkmark-circle-outline"} size={completed ? 48 : 28} color={completed ? "#A7C7E7" : "gray"} />
             </TouchableOpacity>
-          </>
+          </View>
         )}
       </View>
 
       <>
-        {editMode && list.items.length === 0 &&
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={addItem}
-          >
+        {editMode && list.items.length === 0 && (
+          <TouchableOpacity style={styles.button} onPress={addItem}>
             <Text style={styles.buttonText}>Let's go!</Text>
           </TouchableOpacity>
-        }
+        )}
         <FlatList
           data={list.items}
           renderItem={({ item, index }) => (
@@ -122,18 +128,23 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
           keyExtractor={(_, index) => index.toString()}
         />
       </>
-      {completed && <ConfettiCannon
-        count={200}
-        origin={{ x: -10, y: 0 }}
-        explosionSpeed={1000}
-        fallSpeed={5000}
-        colors={CONFETTI_COLORS}
-        fadeOut={false}
-        ref={confettiRef}
+      {completed && (
+        <ConfettiCannon
+          count={200}
+          origin={{ x: -10, y: 0 }}
+          explosionSpeed={1000}
+          fallSpeed={5000}
+          colors={CONFETTI_COLORS}
+          fadeOut={false}
+          ref={confettiRef}
+        />
+      )}
+      <FriendsShareModal
+        visible={isShareModalVisible}
+        onClose={() => setShareModalVisible(false)}
+        onShareConfirmed={handleShareConfirmed}
+        friends={friendsMockData}
       />
-
-      }
-
     </View>
   );
 };
@@ -151,6 +162,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     marginBottom: 20,
+    justifyContent: 'space-between',
   },
   input: {
     flex: 1,
@@ -159,24 +171,21 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
   },
+  iconContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   icon: {
-    position: 'absolute',
-    right: 10,
-    top: 10
+    marginLeft: 10,
   },
   star: {
-    position: 'absolute',
-    top: 10
+    marginLeft: 10,
   },
   saveIcon: {
-    position: 'absolute',
-    right: 35,
-    top: 10
+    marginLeft: 10,
   },
   cancelIcon: {
-    position: 'absolute',
-    right: 1,
-    top: 10
+    marginLeft: 10,
   },
   button: {
     backgroundColor: '#505168',
@@ -188,27 +197,27 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "white",
-  }
+  },
 });
 
 export default EditListModal;
 
 const CONFETTI_COLORS: string[] = [
-  "#00BFFF", // Deep Sky Blue: A vivid, bright blue.
-  "#FF69B4", // Hot Pink: A striking and bright pink.
-  "#9370DB", // Medium Purple: A vibrant, yet not overly bright, purple.
-  "#FF6347", // Tomato: A vivid red-orange.
-  "#FFD700", // Gold: A bright and shiny gold.
-  "#32CD32", // Lime Green: A bright and lively green.
-  "#FFA500", // Orange: A pure, bright orange.
-  "#40E0D0"  // Turquoise: A vibrant and energetic turquoise.
+  "#00BFFF", 
+  "#FF69B4", 
+  "#9370DB", 
+  "#FF6347", 
+  "#FFD700", 
+  "#32CD32", 
+  "#FFA500", 
+  "#40E0D0"  
 ];
 
 const exampleShoppingList: ShoppingList = {
   id: 1,
   name: 'Tygodniowe zakupy',
   categoryName: 'Spożywcze',
-  categoryColor: '#FFD700',  // Złoty kolor dla kategorii spożywczych
+  categoryColor: '#FFD700', 
   ownerUsername: 'JanKowalski',
   updateDate: new Date().toISOString().slice(0, 10),
   updatedBy: 'JanKowalski',
