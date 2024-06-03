@@ -19,7 +19,7 @@ export const mockActiveLists: ShoppingListHeader[] = [
         ownerUsername: 'marko',
         updateDate: '2024-04-10',
         updatedBy: 'anetkaB',
-        completed: false,
+        completed: true,
 
     },
     {

@@ -39,7 +39,7 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
 
   const addItem = () => {
     if (list.items[0]?.name !== "") {
-      const newItem = { name: '', isCompleted: false };
+      const newItem = { name: '', isCompleted: false, quantity: 1 };
       setList(previousList => ({
         ...previousList,
         items: [newItem, ...previousList.items]
@@ -128,7 +128,7 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
         explosionSpeed={1000}
         fallSpeed={5000}
         colors={CONFETTI_COLORS}
-        fadeOut={true}
+        fadeOut={false}
         ref={confettiRef}
       />
 
@@ -213,26 +213,26 @@ const exampleShoppingList: ShoppingList = {
   updateDate: new Date().toISOString().slice(0, 10),
   updatedBy: 'JanKowalski',
   items: [
-    { name: 'Chleb', isCompleted: false },
-    { name: 'Mleko', isCompleted: true },
-    { name: 'Jajka', isCompleted: false },
-    { name: 'Ser żółty', isCompleted: false },
-    { name: 'Masło', isCompleted: true },
-    { name: 'Pomidory', isCompleted: false },
-    { name: 'Ziemniaki', isCompleted: false },
-    { name: 'Jabłka', isCompleted: false },
-    { name: 'Cebula', isCompleted: true },
-    { name: 'Kawa', isCompleted: false },
-    { name: 'Herbata', isCompleted: true },
-    { name: 'Cukier', isCompleted: false },
-    { name: 'Mąka', isCompleted: false },
-    { name: 'Ryż', isCompleted: false },
-    { name: 'Makaron', isCompleted: true },
-    { name: 'Olej słonecznikowy', isCompleted: false },
-    { name: 'Papier toaletowy', isCompleted: true },
-    { name: 'Szampon', isCompleted: false },
-    { name: 'Mydło', isCompleted: true },
-    { name: 'Pasta do zębów', isCompleted: false }
+    { name: 'Chleb', isCompleted: false, quantity: 1 },
+    { name: 'Mleko', isCompleted: true, quantity: 1 },
+    { name: 'Jajka', isCompleted: false, quantity: 1 },
+    { name: 'Ser żółty', isCompleted: false, quantity: 1 },
+    { name: 'Masło', isCompleted: true, quantity: 1 },
+    { name: 'Pomidory', isCompleted: false, quantity: 1 },
+    { name: 'Ziemniaki', isCompleted: false, quantity: 1 },
+    { name: 'Jabłka', isCompleted: false, quantity: 1 },
+    { name: 'Cebula', isCompleted: true, quantity: 1 },
+    { name: 'Kawa', isCompleted: false, quantity: 1 },
+    { name: 'Herbata', isCompleted: true, quantity: 1 },
+    { name: 'Cukier', isCompleted: false, quantity: 1 },
+    { name: 'Mąka', isCompleted: false, quantity: 1 },
+    { name: 'Ryż', isCompleted: false, quantity: 1 },
+    { name: 'Makaron', isCompleted: true, quantity: 1 },
+    { name: 'Olej słonecznikowy', isCompleted: false, quantity: 1 },
+    { name: 'Papier toaletowy', isCompleted: true, quantity: 1 },
+    { name: 'Szampon', isCompleted: false, quantity: 1 },
+    { name: 'Mydło', isCompleted: true, quantity: 1 },
+    { name: 'Pasta do zębów', isCompleted: false, quantity: 1}
   ]
 };
 
