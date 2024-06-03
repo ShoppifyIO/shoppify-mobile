@@ -25,22 +25,28 @@ const FriendsShareModal: React.FC<FriendsShareModalProps> = ({ visible, onClose,
           : [...selectedFriends, friend];
     
         setSelectedFriends(newSelectedFriends);
-      };
+    };
 
     return (
-        <Modal visible={visible} onRequestClose={onClose}>
+        <Modal visible={visible} onRequestClose={onClose} animationType="slide">
             <View style={styles.modalContainer}>
-                <Text style={styles.title}>Wybierz znajomych, którym chcesz udostępnić listę:</Text>
+                <View style={styles.header}>
+                    <Text style={styles.title}>Wybierz znajomych, którym chcesz udostępnić listę:</Text>
+                    <TouchableOpacity onPress={onClose}>
+                        <Ionicons name="close" size={32} color="gray" />
+                    </TouchableOpacity>
+                </View>
                 <FlatList
                     data={friends}
                     keyExtractor={(item) => item.id.toString()}
                     renderItem={({ item }) => (
                         <TouchableOpacity
+                            style={[styles.friendItem, selectedFriends.some(selected => selected.id === item.id) && styles.friendItemSelected]}
                             onPress={() => toggleFriendSelection(item)}
                         >
-                            <Text>{item.name}</Text>
+                            <Text style={styles.friendName}>{item.name}</Text>
                             {selectedFriends.some(selected => selected.id === item.id) && (
-                                <Ionicons name="checkmark" size={20} color="green" />
+                                <Ionicons name="checkmark" size={20} color="green" style={styles.checkmarkIcon} />
                             )}
                         </TouchableOpacity>
                     )}
@@ -60,9 +66,34 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '100%',
+    },
     title: {
         fontSize: 18,
         marginBottom: 20,
+    },
+    friendItem: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ddd',
+        width: '100%',
+    },
+    friendItemSelected: {
+        backgroundColor: '#e0f7fa',
+    },
+    friendName: {
+        flex: 1,
+        fontSize: 16,
+    },
+    checkmarkIcon: {
+        marginLeft: 10,
     },
     button: {
         backgroundColor: '#505168',
