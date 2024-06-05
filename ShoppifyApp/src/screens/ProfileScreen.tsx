@@ -24,7 +24,6 @@ const ProfileScreen = (props: UserProfileScreenProps) => {
       <Text style={userProfileStyles.usernameText}>{user?.username}</Text>
       <Text style={userProfileStyles.emailText}>{user?.email}</Text>
 
-      {/* Ikona wylogowania */}
       <TouchableOpacity style={userProfileStyles.logoutIcon} onPress={handleLogout}>
         <Icon name="logout" size={30} color="gray" />
       </TouchableOpacity>
