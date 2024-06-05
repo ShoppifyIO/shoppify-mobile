@@ -4,7 +4,7 @@ import EditListModal from '../../controls/ShoppingList/EditListModal';
 import { ShoppingListHeader } from '../../models/shoppingListHeader';
 import { listStyles } from './listStyles';
 import ListHeader from './ListHeader';
-import AddListButton from './AddListButton';
+import ActionButton from './ActionButton';
 import { mockActiveLists } from '../../mocks/activeLists';
 
 const ActiveListsScreen: React.FC = () => {
@@ -34,7 +34,7 @@ const ActiveListsScreen: React.FC = () => {
         renderItem={({ item }) => <ListHeader onPress={onPress} model={item} />}
         keyExtractor={(item) => item.id.toString()}
       />
-      <AddListButton onPress={addNewList} />
+      <ActionButton onPress={addNewList} label={'+'} />
       <Modal
         visible={isModalVisible}
         onRequestClose={() => setModalVisible(false)}

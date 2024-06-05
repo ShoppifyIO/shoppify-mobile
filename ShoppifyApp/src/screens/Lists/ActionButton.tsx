@@ -1,19 +1,21 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 
-interface AddListButtonProps {
+interface ActionButtonProps {
   onPress: () => void;
+  label: string;
 }
 
-const AddListButton: React.FC<AddListButtonProps> = ({ onPress }) => {
+const ActionButton: React.FC<ActionButtonProps> = ({ onPress, label }) => {
   return (
-    <TouchableOpacity onPress={onPress} style={styles.addButton}>
-      <Text style={styles.text}>+</Text>
+    <TouchableOpacity onPress={onPress} style={styles.button}>
+      <Text style={styles.text}>{label}</Text>
     </TouchableOpacity>
   );
 };
 
-const styles = StyleSheet.create({  addButton: {
+const styles = StyleSheet.create({
+  button: {
     position: 'absolute',
     right: 20,
     bottom: 20,
@@ -26,8 +28,8 @@ const styles = StyleSheet.create({  addButton: {
   },
   text: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 24,
   },
 });
 
-export default AddListButton;
+export default ActionButton;
