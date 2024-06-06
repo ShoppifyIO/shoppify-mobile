@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, TextInput, StyleSheet, Text, FlatList, TouchableOpacity } from 'react-native';
+import { View, TextInput, StyleSheet, Text, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import ProductItem from './ProductItem';
 import { ShoppingList } from '../../models/list';
@@ -8,11 +8,24 @@ import ConfettiCannon from 'react-native-confetti-cannon';
 import { friendsMockData } from '../../mocks/friendList';
 import { Friend } from '../../models/friend';
 import FriendsShareModal from '../FriendShareModal';
+import CategoryPicker from '../CategoryPicker';
 
 interface EditListModalProps {
   listId: number;
   editMode?: boolean;
+  onSave?: (list: ShoppingList) => void;
 }
+
+interface Category {
+  id: number;
+  title: string;
+  color: string;
+}
+
+const initialCategories: Category[] = [
+  { id: 1, title: 'Spożywcze', color: '#FFD700' },
+  { id: 2, title: 'Domowe', color: '#32CD32' },
+];
 
 const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) => {
   const [name, setName] = useState<string>('');
@@ -20,6 +33,9 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
   const [editMode, setEditMode] = useState<boolean>(props.editMode ?? false);
   const [completed, setCompleted] = useState(false);
   const [isShareModalVisible, setShareModalVisible] = useState(false);
+  const [isCategoryPickerVisible, setCategoryPickerVisible] = useState(false);
+  const [categories, setCategories] = useState<Category[]>(initialCategories);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const confettiRef = useRef<ConfettiCannon>(null);
 
   useEffect(() => {
@@ -71,6 +87,12 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
     console.log('List shared with:', selectedFriends);
   };
 
+  const handleAddCategory = (title: string, color: string) => {
+    const newCategory = { id: categories.length + 1, title, color };
+    setCategories([...categories, newCategory]);
+    setSelectedCategory(newCategory);
+  };
+
   return (
     <View style={[styles.modalContainer, { backgroundColor: completed ? '#f0f0f0' : 'white' }]}>
       <View style={styles.header}>
@@ -104,6 +126,15 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
           </View>
         )}
       </View>
+
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: selectedCategory ? selectedCategory.color : '#ddd' }]}
+        onPress={() => setCategoryPickerVisible(true)}
+      >
+        <Text style={styles.buttonText}>
+          {selectedCategory ? selectedCategory.title : 'Wybierz kategorię'}
+        </Text>
+      </TouchableOpacity>
 
       <>
         {editMode && list.items.length === 0 && (
@@ -144,6 +175,16 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
         onClose={() => setShareModalVisible(false)}
         onShareConfirmed={handleShareConfirmed}
         friends={friendsMockData}
+      />
+      <CategoryPicker
+        visible={isCategoryPickerVisible}
+        onClose={() => setCategoryPickerVisible(false)}
+        onCategorySelect={(category: any) => {
+          setSelectedCategory(category);
+          setCategoryPickerVisible(false);
+        }}
+        categories={categories}
+        onAddCategory={handleAddCategory}
       />
     </View>
   );
@@ -196,7 +237,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   buttonText: {
-    color: "white",
+    color: 'white',
   },
 });
 
