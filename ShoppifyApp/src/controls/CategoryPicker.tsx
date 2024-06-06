@@ -65,26 +65,23 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({ visible, onClose, onCat
             <Text style={styles.addButtonText}>Dodaj kategorię</Text>
           </TouchableOpacity>
         </View>
-        {isColorPickerVisible && (
-          <Modal transparent={true} animationType="slide">
-            <View style={styles.colorPickerModal}>
-            <View style={styles.modalContent}>
-              <ColorPicker
-                color={newCategoryColor}
-                onColorChangeComplete={(color) => setNewCategoryColor(color)}
-                thumbSize={30}
-                sliderSize={40}
-                gapSize={40}
-                noSnap={true}
-                row={false}
-              />
-              <TouchableOpacity onPress={() => setColorPickerVisible(false)} style={styles.colorPickerCloseButton}>
-                <Text style={styles.colorPickerCloseButtonText}>Zamknij</Text>
-              </TouchableOpacity>
-            </View>
+          <Modal visible={isColorPickerVisible} animationType="slide" transparent>
+            <View style={styles.colorPickerOverlay}>
+              <View style={styles.colorPickerModalContent}>
+                <ColorPicker                
+                  color={newCategoryColor}
+                  onColorChangeComplete={(color) => setNewCategoryColor(color)}
+                  row={false}
+                 sliderHidden={true}
+                 gapSize={10}
+                 thumbSize={20}
+                />
+                <TouchableOpacity onPress={() => setColorPickerVisible(false)} style={styles.colorPickerCloseButton}>
+                  <Text style={styles.colorPickerCloseButtonText}>Zamknij</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </Modal>
-        )}
       </View>
     </Modal>
   );
@@ -157,17 +154,29 @@ const styles = StyleSheet.create({
   addButtonText: {
     color: 'white',
   },
-  colorPickerModal: {
+  colorPickerOverlay: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+  },
+  colorPickerModalContent: {
+    width: '100%',
+    padding: 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    alignItems: 'center',
+    overflow: 'hidden',
+    justifyContent: 'center',
+    flex: 1
+    
   },
   colorPickerCloseButton: {
     backgroundColor: '#505168',
     borderRadius: 5,
     paddingVertical: 10,
     paddingHorizontal: 20,
-    marginTop: 30,   
+    marginTop: 60,
   },
   colorPickerCloseButtonText: {
     color: 'white',
