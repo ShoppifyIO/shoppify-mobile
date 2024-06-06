@@ -47,6 +47,7 @@ const ActiveListsScreen: React.FC = () => {
     };
     setLists([header, ...lists.filter(list => list.id !== header.id)]);
     setModalVisible(false);
+    fetchActiveLists();
   };
 
   const onPress = (id: number) => {
