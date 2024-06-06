@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, FlatList, Modal, TextInput, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Category } from '../models/category';
+import ColorPicker from 'react-native-wheel-color-picker';
+
+interface Category {
+  id: number;
+  title: string;
+  color: string;
+}
 
 interface CategoryPickerProps {
   visible: boolean;
@@ -51,17 +57,31 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({ visible, onClose, onCat
               onChangeText={setNewCategoryTitle}
               style={styles.input}
             />
-            <TextInput
-              placeholder="Kolor HEX (np. #ff5733)"
-              value={newCategoryColor}
-              onChangeText={setNewCategoryColor}
-              style={[styles.input, { marginLeft: 10, width: 100 }]}
-            />
+            <TouchableOpacity onPress={() => setColorPickerVisible(true)} style={styles.colorPickerButton}>
+              <Ionicons name="brush" size={24} color={newCategoryColor} />
+            </TouchableOpacity>
           </View>
           <TouchableOpacity onPress={handleAddCategory} style={styles.addButton}>
             <Text style={styles.addButtonText}>Dodaj kategorię</Text>
           </TouchableOpacity>
         </View>
+        {isColorPickerVisible && (
+          <Modal transparent={false} animationType="slide">
+            <View style={styles.colorPickerModal}>
+              <ColorPicker
+                color={newCategoryColor}
+                onColorChangeComplete={(color) => setNewCategoryColor(color)}
+                thumbSize={40}
+                sliderSize={40}
+                noSnap={true}
+                row={false}
+              />
+              <TouchableOpacity onPress={() => setColorPickerVisible(false)} style={styles.colorPickerCloseButton}>
+                <Text style={styles.colorPickerCloseButtonText}>Zamknij</Text>
+              </TouchableOpacity>
+            </View>
+          </Modal>
+        )}
       </View>
     </Modal>
   );
@@ -121,6 +141,9 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     borderRadius: 5,
   },
+  colorPickerButton: {
+    marginLeft: 10,
+  },
   addButton: {
     backgroundColor: '#505168',
     borderRadius: 5,
@@ -129,6 +152,22 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   addButtonText: {
+    color: 'white',
+  },
+  colorPickerModal: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+  },
+  colorPickerCloseButton: {
+    backgroundColor: '#505168',
+    borderRadius: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    marginTop: 10,
+  },
+  colorPickerCloseButtonText: {
     color: 'white',
   },
 });
