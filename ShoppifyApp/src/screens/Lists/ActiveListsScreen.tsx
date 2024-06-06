@@ -20,7 +20,6 @@ const ActiveListsScreen: React.FC = () => {
   const fetchActiveLists = () => {
     getActiveShoppingLists(
       (fetchedLists) => {
-        console.log(fetchedLists[0].name)
         setLists(fetchedLists);
       },
       (error) => {

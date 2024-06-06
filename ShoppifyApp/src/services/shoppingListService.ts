@@ -80,6 +80,34 @@ export const getActiveShoppingLists = async (onSuccess: (lists: ShoppingListHead
     }
 };
 
+export const getArchivedShoppingLists = async (onSuccess: (lists: ShoppingListHeader[]) => void, onError: (error: any) => void) => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await axiosInstance.get('/shopping-list/archive', {
+            headers: { token: token }
+        });
+
+        if (response.status === 200) {
+            const lists = response.data.map((list: ShoppingList) => ({
+                id: list.id,
+                name: list.title,
+                categoryName: list.category?.title,
+                categoryColor: list.category?.color,
+                ownerUsername: list.owner_id?.toString(),
+                updateDate: format(new Date(list.update_date ?? list.creation_date), 'dd MMM yyyy, HH:mm'),
+                updatedBy: (list.updated_by ?? list.owner_username).toString(),
+                completed: list.is_completed,
+            }));
+            onSuccess(lists);
+        } else {
+            console.error("Failed to fetch archived lists", response.status);
+            onError(new Error("Nie udało się pobrać archiwalnych list"));
+        }
+    } catch (error) {
+        console.error(error);
+        onError(error);
+    }
+};
 
 export const newShoppingList: ShoppingList = {
     id: -1,
