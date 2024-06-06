@@ -2,13 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, TextInput, StyleSheet, Text, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import ProductItem from './ProductItem';
-import { ShoppingList } from '../../models/list';
+import { ShoppingList } from '../../models/ShoppingList';
 import { ShoppingListItem } from '../../models/shoppingListItem';
 import ConfettiCannon from 'react-native-confetti-cannon';
 import { friendsMockData } from '../../mocks/friendList';
 import { Friend } from '../../models/friend';
 import FriendsShareModal from '../FriendShareModal';
 import CategoryPicker from '../CategoryPicker';
+import { saveShoppingList, getShoppingList, newShoppingList } from '../../services/shoppingListService';
 
 interface EditListModalProps {
   listId: number;
@@ -39,9 +40,9 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
   const confettiRef = useRef<ConfettiCannon>(null);
 
   useEffect(() => {
-    const fetchedList = getList(props.listId);
+    const fetchedList = getShoppingList(props.listId);
     setList(fetchedList);
-    setName(fetchedList.name);
+    setName(fetchedList.title);
   }, [props.listId, editMode]);
 
   useEffect(() => {
@@ -79,8 +80,16 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
   };
 
   const handleSave = () => {
-    console.log("save");
-    setEditMode(false);
+    saveShoppingList(name, list.items.filter(e => e.name != ""), (updatedList) => {
+      if (props.onSave) {
+        props.onSave(updatedList);
+      }
+      console.log("List saved successfully");
+      setEditMode(false);
+    }, (error) => {
+      console.error(error);
+      Alert.alert("Błąd", "Wystąpił błąd podczas zapisywania listy");
+    });
   };
 
   const handleShareConfirmed = (selectedFriends: Friend[]) => {
@@ -244,64 +253,12 @@ const styles = StyleSheet.create({
 export default EditListModal;
 
 const CONFETTI_COLORS: string[] = [
-  "#00BFFF", 
-  "#FF69B4", 
-  "#9370DB", 
-  "#FF6347", 
-  "#FFD700", 
-  "#32CD32", 
-  "#FFA500", 
-  "#40E0D0"  
+  "#00BFFF",
+  "#FF69B4",
+  "#9370DB",
+  "#FF6347",
+  "#FFD700",
+  "#32CD32",
+  "#FFA500",
+  "#40E0D0"
 ];
-
-const exampleShoppingList: ShoppingList = {
-  id: 1,
-  name: 'Tygodniowe zakupy',
-  categoryName: 'Spożywcze',
-  categoryColor: '#FFD700', 
-  ownerUsername: 'JanKowalski',
-  updateDate: new Date().toISOString().slice(0, 10),
-  updatedBy: 'JanKowalski',
-  items: [
-    { name: 'Chleb', isCompleted: false, quantity: 1 },
-    { name: 'Mleko', isCompleted: true, quantity: 1 },
-    { name: 'Jajka', isCompleted: false, quantity: 1 },
-    { name: 'Ser żółty', isCompleted: false, quantity: 1 },
-    { name: 'Masło', isCompleted: true, quantity: 1 },
-    { name: 'Pomidory', isCompleted: false, quantity: 1 },
-    { name: 'Ziemniaki', isCompleted: false, quantity: 1 },
-    { name: 'Jabłka', isCompleted: false, quantity: 1 },
-    { name: 'Cebula', isCompleted: true, quantity: 1 },
-    { name: 'Kawa', isCompleted: false, quantity: 1 },
-    { name: 'Herbata', isCompleted: true, quantity: 1 },
-    { name: 'Cukier', isCompleted: false, quantity: 1 },
-    { name: 'Mąka', isCompleted: false, quantity: 1 },
-    { name: 'Ryż', isCompleted: false, quantity: 1 },
-    { name: 'Makaron', isCompleted: true, quantity: 1 },
-    { name: 'Olej słonecznikowy', isCompleted: false, quantity: 1 },
-    { name: 'Papier toaletowy', isCompleted: true, quantity: 1 },
-    { name: 'Szampon', isCompleted: false, quantity: 1 },
-    { name: 'Mydło', isCompleted: true, quantity: 1 },
-    { name: 'Pasta do zębów', isCompleted: false, quantity: 1}
-  ]
-};
-
-const newShoppingList: ShoppingList = {
-  id: -1,
-  name: 'Nowa lista zakupów',
-  categoryName: 'Nowa kategoria',
-  ownerUsername: 'NowyUżytkownik',
-  updateDate: new Date().toISOString().slice(0, 10),
-  updatedBy: 'NowyUżytkownik',
-  categoryColor: null,
-  items: []
-};
-
-function getList(id: number): ShoppingList {
-  console.log("id", id);
-  if (id > 0) {
-    console.log("here");
-    return exampleShoppingList;
-  }
-  return newShoppingList;
-}

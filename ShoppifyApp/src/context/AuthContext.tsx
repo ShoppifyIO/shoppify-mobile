@@ -30,7 +30,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       if (storagedUser && storagedToken) {
         setUser(JSON.parse(storagedUser));
-        axiosInstance.defaults.headers.Authorization = `Bearer ${storagedToken}`;
+        axiosInstance.defaults.headers['Token'] = storagedToken;
       }
     };
 
@@ -47,7 +47,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const { user, token } = response.data;
 
       setUser(user);
-      axiosInstance.defaults.headers.Authorization = `Bearer ${token}`;
+      axiosInstance.defaults.headers['Token'] = token;
       await AsyncStorage.setItem('user', JSON.stringify(user));
       await AsyncStorage.setItem('token', token);
     } catch (error) {
@@ -81,7 +81,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const signOut = async () => {
     await AsyncStorage.clear();
     setUser(null);
-    delete axiosInstance.defaults.headers.Authorization;
+    delete axiosInstance.defaults.headers['Token'];
   };
 
   return (

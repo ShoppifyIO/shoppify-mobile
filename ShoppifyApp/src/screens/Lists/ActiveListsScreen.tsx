@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, Modal, Button, FlatList, GestureResponderEvent } from 'react-native';
+import { View, Modal, FlatList } from 'react-native';
 import EditListModal from '../../controls/ShoppingList/EditListModal';
 import { ShoppingListHeader } from '../../models/shoppingListHeader';
 import { listStyles } from './listStyles';
 import ListHeader from './ListHeader';
 import ActionButton from './ActionButton';
 import { mockActiveLists } from '../../mocks/activeLists';
+import { ShoppingList } from '../../models/ShoppingList';
 
 const ActiveListsScreen: React.FC = () => {
   const [lists, setLists] = useState<ShoppingListHeader[]>(mockActiveLists);
@@ -17,8 +18,18 @@ const ActiveListsScreen: React.FC = () => {
     setModalVisible(true);
   };
 
-  const saveList = (updatedList: ShoppingListHeader) => {
-    setLists([updatedList, ...lists.filter(list => list.id !== updatedList.id)]);
+  const saveList = (updatedList: ShoppingList) => {
+    const header: ShoppingListHeader = {
+      id: updatedList.id,
+      name: updatedList.title,
+      categoryName: updatedList.category?.title,
+      categoryColor: updatedList.category?.color,
+      ownerUsername: updatedList.owner_id.toString(),
+      updateDate: updatedList.update_date,
+      updatedBy: updatedList.owner_id.toString(),
+      completed: updatedList.is_completed,
+    };
+    setLists([header, ...lists.filter(list => list.id !== header.id)]);
     setModalVisible(false);
   };
 
@@ -41,7 +52,8 @@ const ActiveListsScreen: React.FC = () => {
       >
         <EditListModal
           listId={currentListId ?? -1}
-          editMode={currentListId == -1}
+          editMode={currentListId === -1}
+          onSave={saveList}
         />
       </Modal>
     </View>
