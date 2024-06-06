@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Modal, FlatList, Alert } from 'react-native';
+import { View, Modal, FlatList, Alert, RefreshControl } from 'react-native';
 import EditListModal from '../../controls/ShoppingList/EditListModal';
 import { ShoppingListHeader } from '../../models/shoppingListHeader';
 import { listStyles } from './listStyles';
@@ -12,6 +12,7 @@ const ActiveListsScreen: React.FC = () => {
   const [lists, setLists] = useState<ShoppingListHeader[]>([]);
   const [isModalVisible, setModalVisible] = useState(false);
   const [currentListId, setCurrentListId] = useState<number | null>(null);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
 
   useEffect(() => {
     fetchActiveLists();
@@ -21,12 +22,19 @@ const ActiveListsScreen: React.FC = () => {
     getActiveShoppingLists(
       (fetchedLists) => {
         setLists(fetchedLists);
+        setRefreshing(false);
       },
       (error) => {
         console.error(error);
         Alert.alert("Błąd", "Nie udało się pobrać aktywnych list");
+        setRefreshing(false);
       }
     );
+  };
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchActiveLists();
   };
 
   const addNewList = () => {
@@ -61,6 +69,9 @@ const ActiveListsScreen: React.FC = () => {
         data={lists}
         renderItem={({ item }) => <ListHeader onPress={onPress} model={item} />}
         keyExtractor={(item) => item.id.toString()}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
       <ActionButton onPress={addNewList} label={'+'} />
       <Modal
