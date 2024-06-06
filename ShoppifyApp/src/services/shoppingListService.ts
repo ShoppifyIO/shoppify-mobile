@@ -1,6 +1,7 @@
 import axiosInstance from '../axiosConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ShoppingList } from '../models/ShoppingList';
+import { ShoppingListHeader } from '../models/shoppingListHeader';
 
 export const saveShoppingList = async (title: string, items: any[], onSuccess: (list: ShoppingList) => void, onError: (error: any) => void) => {
     try {
@@ -29,54 +30,60 @@ export const saveShoppingList = async (title: string, items: any[], onSuccess: (
     }
 };
 
-export const getShoppingList = (id: number): ShoppingList => {
-    if (id > 0) {
-        return exampleShoppingList;
+export const getShoppingList = async (id: number, onSuccess: (list: ShoppingList) => void, onError: (error: any) => void) => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await axiosInstance.get(`/shopping-list/${id}`, {
+            headers: { token: token }
+        });
+
+        if (response.status === 200) {
+            const list = response.data;
+            onSuccess(list);
+        } else {
+            console.error("Failed to fetch the list", response.status);
+            onError(new Error("Nie udało się pobrać listy"));
+        }
+    } catch (error) {
+        console.error(error);
+        onError(error);
     }
-    return newShoppingList;
 };
 
-const exampleShoppingList: ShoppingList = {
-    id: 1,
-    owner_id: 1,
-    title: 'Tygodniowe zakupy',
-    creation_date: new Date().toISOString(),
-    update_date: new Date().toISOString(),
-    is_completed: false,
-    category: {
-        id: 1,
-        owner_id: 1,
-        title: 'Spożywcze',
-        color: "#00BFFF"
-    },
-    items: [
-        { name: 'Chleb', isCompleted: false, quantity: 1 },
-        { name: 'Mleko', isCompleted: true, quantity: 1 },
-        { name: 'Jajka', isCompleted: false, quantity: 1 },
-        { name: 'Ser żółty', isCompleted: false, quantity: 1 },
-        { name: 'Masło', isCompleted: true, quantity: 1 },
-        { name: 'Pomidory', isCompleted: false, quantity: 1 },
-        { name: 'Ziemniaki', isCompleted: false, quantity: 1 },
-        { name: 'Jabłka', isCompleted: false, quantity: 1 },
-        { name: 'Cebula', isCompleted: true, quantity: 1 },
-        { name: 'Kawa', isCompleted: false, quantity: 1 },
-        { name: 'Herbata', isCompleted: true, quantity: 1 },
-        { name: 'Cukier', isCompleted: false, quantity: 1 },
-        { name: 'Mąka', isCompleted: false, quantity: 1 },
-        { name: 'Ryż', isCompleted: false, quantity: 1 },
-        { name: 'Makaron', isCompleted: true, quantity: 1 },
-        { name: 'Olej słonecznikowy', isCompleted: false, quantity: 1 },
-        { name: 'Papier toaletowy', isCompleted: true, quantity: 1 },
-        { name: 'Szampon', isCompleted: false, quantity: 1 },
-        { name: 'Mydło', isCompleted: true, quantity: 1 },
-        { name: 'Pasta do zębów', isCompleted: false, quantity: 1 }
-    ]
+export const getActiveShoppingLists = async (onSuccess: (lists: ShoppingListHeader[]) => void, onError: (error: any) => void) => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await axiosInstance.get('/shopping-list/active', {
+            headers: { token: token }
+        });
+
+        if (response.status === 200) {
+            const lists = response.data.map((list: ShoppingList) => ({
+                id: list.id,
+                name: list.title,
+                categoryName: list.category?.title,
+                categoryColor: list.category?.color,
+                ownerUsername: list.owner_id?.toString(),
+                updateDate: list.update_date,
+                updatedBy: list.owner_id?.toString(),
+                completed: list.is_completed
+            }));
+            onSuccess(lists);
+        } else {
+            console.error("Failed to fetch active lists", response.status);
+            onError(new Error("Nie udało się pobrać aktywnych list"));
+        }
+    } catch (error) {
+        console.error(error);
+        onError(error);
+    }
 };
+
 
 export const newShoppingList: ShoppingList = {
     id: -1,
     owner_id: -1,
-    title: 'Nowa lista zakupów',
+    title: '',
     creation_date: new Date().toISOString(),
     update_date: new Date().toISOString(),
     is_completed: false,
@@ -86,5 +93,5 @@ export const newShoppingList: ShoppingList = {
         title: '',
         color: ''
     },
-    items: []
+    shopping_items: []
 };

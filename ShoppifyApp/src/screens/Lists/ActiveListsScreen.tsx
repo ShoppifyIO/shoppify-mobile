@@ -1,17 +1,34 @@
-import React, { useState } from 'react';
-import { View, Modal, FlatList } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Modal, FlatList, Alert } from 'react-native';
 import EditListModal from '../../controls/ShoppingList/EditListModal';
 import { ShoppingListHeader } from '../../models/shoppingListHeader';
 import { listStyles } from './listStyles';
 import ListHeader from './ListHeader';
 import ActionButton from './ActionButton';
-import { mockActiveLists } from '../../mocks/activeLists';
+import { getActiveShoppingLists } from '../../services/shoppingListService';
 import { ShoppingList } from '../../models/ShoppingList';
 
 const ActiveListsScreen: React.FC = () => {
-  const [lists, setLists] = useState<ShoppingListHeader[]>(mockActiveLists);
+  const [lists, setLists] = useState<ShoppingListHeader[]>([]);
   const [isModalVisible, setModalVisible] = useState(false);
   const [currentListId, setCurrentListId] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetchActiveLists();
+  }, []);
+
+  const fetchActiveLists = () => {
+    getActiveShoppingLists(
+      (fetchedLists) => {
+        console.log(fetchedLists[0].name)
+        setLists(fetchedLists);
+      },
+      (error) => {
+        console.error(error);
+        Alert.alert("Błąd", "Nie udało się pobrać aktywnych list");
+      }
+    );
+  };
 
   const addNewList = () => {
     setCurrentListId(-1);

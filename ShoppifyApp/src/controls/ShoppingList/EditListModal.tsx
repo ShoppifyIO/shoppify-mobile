@@ -40,29 +40,39 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
   const confettiRef = useRef<ConfettiCannon>(null);
 
   useEffect(() => {
-    const fetchedList = getShoppingList(props.listId);
-    setList(fetchedList);
-    setName(fetchedList.title);
+    if (props.listId !== -1) {
+      getShoppingList(
+        props.listId,
+        (fetchedList) => {
+          setList(fetchedList);
+          setName(fetchedList.title);
+        },
+        (error) => {
+          console.error(error);
+          Alert.alert("Błąd", "Nie udało się pobrać listy");
+        }
+      );
+    }
   }, [props.listId, editMode]);
 
   useEffect(() => {
-    if (editMode && list.items.length > 0) {
+    if (editMode && list.shopping_items.length > 0) {
       addItem();
     }
   }, [editMode]);
 
   const handleItemChange = (item: ShoppingListItem, index: number) => {
-    const newItems = [...list.items];
+    const newItems = [...list.shopping_items];
     newItems[index] = item;
-    setList(previousList => ({ ...previousList, items: newItems }));
+    setList((previousList:ShoppingList) => ({ ...previousList, shopping_items: newItems }));
   };
 
   const addItem = () => {
-    if (list.items[0]?.name !== "") {
+    if (list.shopping_items[0]?.name !== "") {
       const newItem = { name: '', isCompleted: false, quantity: 1 };
-      setList(previousList => ({
+      setList((previousList: ShoppingList )=> ({
         ...previousList,
-        items: [newItem, ...previousList.items]
+        shopping_items: [newItem, ...previousList.shopping_items]
       }));
     }
   };
@@ -80,7 +90,7 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
   };
 
   const handleSave = () => {
-    saveShoppingList(name, list.items.filter(e => e.name != ""), (updatedList) => {
+    saveShoppingList(name, list.shopping_items.filter(e => e.name != ""), (updatedList) => {
       if (props.onSave) {
         props.onSave(updatedList);
       }
@@ -109,7 +119,7 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
           style={styles.input}
           value={name}
           onChangeText={setName}
-          placeholder="Nazwa listy"
+          placeholder={editMode ? "Nazwa listy" : ""}
           editable={editMode}
         />
         {editMode ? (
@@ -146,13 +156,13 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
       </TouchableOpacity>
 
       <>
-        {editMode && list.items.length === 0 && (
+        {editMode && list.shopping_items.length === 0 && (
           <TouchableOpacity style={styles.button} onPress={addItem}>
             <Text style={styles.buttonText}>Let's go!</Text>
           </TouchableOpacity>
         )}
         <FlatList
-          data={list.items}
+          data={list.shopping_items}
           renderItem={({ item, index }) => (
             <ProductItem
               name={item.name}

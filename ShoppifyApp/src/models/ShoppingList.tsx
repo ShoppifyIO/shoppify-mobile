@@ -10,5 +10,5 @@ export interface ShoppingList {
     update_date: string;
     is_completed: boolean;
     category: Category;
-    items: ShoppingListItem[];
+    shopping_items: ShoppingListItem[];
 }
