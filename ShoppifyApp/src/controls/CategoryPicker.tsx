@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, FlatList, Modal, TextInput, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, FlatList, Modal, TextInput, StyleSheet, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import ColorPicker from 'react-native-wheel-color-picker';
+import { addCategory, getCategories } from '../services/categoryService';
 
 interface Category {
   id: number;
@@ -13,21 +14,42 @@ interface CategoryPickerProps {
   visible: boolean;
   onClose: () => void;
   onCategorySelect: (category: Category) => void;
-  categories: Category[];
-  onAddCategory: (title: string, color: string) => void;
 }
 
 const NEW_CATEGORY_DEFAULT_COLOR: string = '#686D76';
 
-const CategoryPicker: React.FC<CategoryPickerProps> = ({ visible, onClose, onCategorySelect, categories, onAddCategory }) => {
+const CategoryPicker: React.FC<CategoryPickerProps> = ({ visible, onClose, onCategorySelect }) => {
+  const [categories, setCategories] = useState<Category[]>([]);
   const [newCategoryTitle, setNewCategoryTitle] = useState('');
   const [newCategoryColor, setNewCategoryColor] = useState(NEW_CATEGORY_DEFAULT_COLOR);
   const [isColorPickerVisible, setColorPickerVisible] = useState(false);
 
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = () => {
+    getCategories(
+      (fetchedCategories: Category[]) => setCategories(fetchedCategories),
+      (error: any) => {
+        console.error(error);
+        Alert.alert("Błąd", "Nie udało się pobrać kategorii");
+      }
+    );
+  };
+
   const handleAddCategory = () => {
-    onAddCategory(newCategoryTitle, newCategoryColor);
-    setNewCategoryTitle('');
-    setNewCategoryColor(NEW_CATEGORY_DEFAULT_COLOR);
+    addCategory(newCategoryTitle, newCategoryColor,
+      (newCategory: Category) => {
+        setCategories([...categories, newCategory]);
+        setNewCategoryTitle('');
+        setNewCategoryColor(NEW_CATEGORY_DEFAULT_COLOR);
+      },
+      (error: any) => {
+        console.error(error);
+        Alert.alert("Błąd", "Nie udało się dodać kategorii");
+      }
+    );
   };
 
   return (
@@ -65,23 +87,23 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({ visible, onClose, onCat
             <Text style={styles.addButtonText}>Dodaj kategorię</Text>
           </TouchableOpacity>
         </View>
-          <Modal visible={isColorPickerVisible} animationType="slide" transparent>
-            <View style={styles.colorPickerOverlay}>
-              <View style={styles.colorPickerModalContent}>
-                <ColorPicker                
-                  color={newCategoryColor}
-                  onColorChangeComplete={(color) => setNewCategoryColor(color)}
-                  row={false}
-                 sliderHidden={true}
-                 gapSize={10}
-                 thumbSize={20}
-                />
-                <TouchableOpacity onPress={() => setColorPickerVisible(false)} style={styles.colorPickerCloseButton}>
-                  <Text style={styles.colorPickerCloseButtonText}>Zamknij</Text>
-                </TouchableOpacity>
-              </View>
+        <Modal visible={isColorPickerVisible} animationType="slide" transparent>
+          <View style={styles.colorPickerOverlay}>
+            <View style={styles.colorPickerModalContent}>
+              <ColorPicker
+                color={newCategoryColor}
+                onColorChangeComplete={(color) => setNewCategoryColor(color)}
+                row={false}
+                sliderHidden={true}
+                gapSize={10}
+                thumbSize={20}
+              />
+              <TouchableOpacity onPress={() => setColorPickerVisible(false)} style={styles.colorPickerCloseButton}>
+                <Text style={styles.colorPickerCloseButtonText}>Zamknij</Text>
+              </TouchableOpacity>
             </View>
-          </Modal>
+          </View>
+        </Modal>
       </View>
     </Modal>
   );

@@ -23,11 +23,6 @@ interface Category {
   color: string;
 }
 
-const initialCategories: Category[] = [
-  { id: 1, title: 'Spożywcze', color: '#FFD700' },
-  { id: 2, title: 'Domowe', color: '#32CD32' },
-];
-
 const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) => {
   const [name, setName] = useState<string>('');
   const [list, setList] = useState<ShoppingList>(newShoppingList);
@@ -35,7 +30,6 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
   const [completed, setCompleted] = useState(false);
   const [isShareModalVisible, setShareModalVisible] = useState(false);
   const [isCategoryPickerVisible, setCategoryPickerVisible] = useState(false);
-  const [categories, setCategories] = useState<Category[]>(initialCategories);
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const confettiRef = useRef<ConfettiCannon>(null);
 
@@ -106,10 +100,9 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
     console.log('List shared with:', selectedFriends);
   };
 
-  const handleAddCategory = (title: string, color: string) => {
-    const newCategory = { id: categories.length + 1, title, color };
-    setCategories([...categories, newCategory]);
-    setSelectedCategory(newCategory);
+  const handleCategorySelect = (category: Category) => {
+    setSelectedCategory(category);
+    setCategoryPickerVisible(false);
   };
 
   return (
@@ -198,12 +191,7 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
       <CategoryPicker
         visible={isCategoryPickerVisible}
         onClose={() => setCategoryPickerVisible(false)}
-        onCategorySelect={(category: any) => {
-          setSelectedCategory(category);
-          setCategoryPickerVisible(false);
-        }}
-        categories={categories}
-        onAddCategory={handleAddCategory}
+        onCategorySelect={handleCategorySelect}
       />
     </View>
   );
