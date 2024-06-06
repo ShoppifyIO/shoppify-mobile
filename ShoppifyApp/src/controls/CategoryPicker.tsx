@@ -66,19 +66,22 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({ visible, onClose, onCat
           </TouchableOpacity>
         </View>
         {isColorPickerVisible && (
-          <Modal transparent={false} animationType="slide">
+          <Modal transparent={true} animationType="slide">
             <View style={styles.colorPickerModal}>
+            <View style={styles.modalContent}>
               <ColorPicker
                 color={newCategoryColor}
                 onColorChangeComplete={(color) => setNewCategoryColor(color)}
-                thumbSize={40}
+                thumbSize={30}
                 sliderSize={40}
+                gapSize={40}
                 noSnap={true}
                 row={false}
               />
               <TouchableOpacity onPress={() => setColorPickerVisible(false)} style={styles.colorPickerCloseButton}>
                 <Text style={styles.colorPickerCloseButtonText}>Zamknij</Text>
               </TouchableOpacity>
+            </View>
             </View>
           </Modal>
         )}
@@ -158,14 +161,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'white',
   },
   colorPickerCloseButton: {
     backgroundColor: '#505168',
     borderRadius: 5,
     paddingVertical: 10,
     paddingHorizontal: 20,
-    marginTop: 10,
+    marginTop: 30,   
   },
   colorPickerCloseButtonText: {
     color: 'white',
