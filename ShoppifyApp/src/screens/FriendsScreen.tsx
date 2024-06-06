@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ListRenderIt
 import { friendsMockData, mockNewFriend } from '../mocks/friendList';
 import { Friend } from '../models/friend';
 import ActionButton from './Lists/ActionButton';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const FriendsScreen = () => {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -43,6 +44,9 @@ const FriendsScreen = () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
+            <TouchableOpacity style={styles.closeIcon} onPress={() => setModalVisible(false)}>
+              <Icon name="close" size={24} color="black" />
+            </TouchableOpacity>
             <Text style={styles.modalTitle}>Dodaj Przyjaciela</Text>
             <TextInput
               placeholder="Nazwa użytkownika"
@@ -125,6 +129,11 @@ const styles = StyleSheet.create({
   },
   addButtonText: {
     color: 'white',
+  },
+  closeIcon: {
+    position: 'absolute',
+    right: 10,
+    top: 10,
   },
 });
 
