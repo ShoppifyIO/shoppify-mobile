@@ -2,6 +2,7 @@ import axiosInstance from '../axiosConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ShoppingList } from '../models/ShoppingList';
 import { ShoppingListHeader } from '../models/shoppingListHeader';
+import { format } from 'date-fns';
 
 export const saveShoppingList = async (title: string, items: any[], onSuccess: (list: ShoppingList) => void, onError: (error: any) => void) => {
     try {
@@ -64,9 +65,9 @@ export const getActiveShoppingLists = async (onSuccess: (lists: ShoppingListHead
                 categoryName: list.category?.title,
                 categoryColor: list.category?.color,
                 ownerUsername: list.owner_id?.toString(),
-                updateDate: list.update_date,
-                updatedBy: list.owner_id?.toString(),
-                completed: list.is_completed
+                updateDate: format(new Date(list.update_date ?? list.creation_date), 'dd MMM yyyy, HH:mm'),
+                updatedBy: (list.updated_by ?? list.owner_username).toString(),
+                completed: list.is_completed,
             }));
             onSuccess(lists);
         } else {
@@ -93,5 +94,8 @@ export const newShoppingList: ShoppingList = {
         title: '',
         color: ''
     },
-    shopping_items: []
+    shopping_items: [],
+    updated_by: '',
+    owner_username: '',
+    is_user_owner: false
 };

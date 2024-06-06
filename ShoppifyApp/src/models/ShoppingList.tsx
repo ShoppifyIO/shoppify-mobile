@@ -9,6 +9,9 @@ export interface ShoppingList {
     creation_date: string;
     update_date: string;
     is_completed: boolean;
-    category: Category;
+    category?: Category;
     shopping_items: ShoppingListItem[];
+    updated_by: string;
+    owner_username: string;
+    is_user_owner: boolean;
 }

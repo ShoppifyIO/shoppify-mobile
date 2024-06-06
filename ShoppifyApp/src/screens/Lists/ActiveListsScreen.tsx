@@ -39,8 +39,8 @@ const ActiveListsScreen: React.FC = () => {
     const header: ShoppingListHeader = {
       id: updatedList.id,
       name: updatedList.title,
-      categoryName: updatedList.category?.title,
-      categoryColor: updatedList.category?.color,
+      categoryName: updatedList.category?.title ?? "",
+      categoryColor: updatedList.category?.color ?? "",
       ownerUsername: updatedList.owner_id.toString(),
       updateDate: updatedList.update_date,
       updatedBy: updatedList.owner_id.toString(),
