@@ -40,6 +40,7 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
         (fetchedList) => {
           setList(fetchedList);
           setName(fetchedList.title);
+          setSelectedCategory(fetchedList.category ? { id: fetchedList.category.id, title: fetchedList.category.title, color: fetchedList.category.color } : null);
         },
         (error) => {
           console.error(error);
@@ -58,13 +59,13 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
   const handleItemChange = (item: ShoppingListItem, index: number) => {
     const newItems = [...list.shopping_items];
     newItems[index] = item;
-    setList((previousList:ShoppingList) => ({ ...previousList, shopping_items: newItems }));
+    setList((previousList: ShoppingList) => ({ ...previousList, shopping_items: newItems }));
   };
 
   const addItem = () => {
     if (list.shopping_items[0]?.name !== "") {
       const newItem = { name: '', isCompleted: false, quantity: 1 };
-      setList((previousList: ShoppingList )=> ({
+      setList((previousList: ShoppingList) => ({
         ...previousList,
         shopping_items: [newItem, ...previousList.shopping_items]
       }));
@@ -84,7 +85,7 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
   };
 
   const handleSave = () => {
-    saveShoppingList(name, list.shopping_items.filter(e => e.name != ""), (updatedList) => {
+    saveShoppingList(name, list.shopping_items.filter(e => e.name !== ""), selectedCategory ? selectedCategory.id : null, (updatedList) => {
       if (props.onSave) {
         props.onSave(updatedList);
       }

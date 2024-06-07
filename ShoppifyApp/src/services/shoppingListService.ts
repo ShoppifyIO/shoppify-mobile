@@ -4,19 +4,26 @@ import { ShoppingList } from '../models/ShoppingList';
 import { ShoppingListHeader } from '../models/shoppingListHeader';
 import { format } from 'date-fns';
 
-export const saveShoppingList = async (title: string, items: any[], onSuccess: (list: ShoppingList) => void, onError: (error: any) => void) => {
+export const saveShoppingList = async (title: string, items: any[], categoryId: number | null, onSuccess: (list: ShoppingList) => void, onError: (error: any) => void) => {
     try {
         const token = await AsyncStorage.getItem('token');
-        const response = await axiosInstance.post('/shopping-list/add', {
+        const data: any = {
             title: title,
             shopping_items: items.map(item => ({
                 name: item.name,
                 quantity: item.quantity,
                 isCompleted: false
             }))
-        }, {
+        };
+
+        if (categoryId) {
+            data.category_id = categoryId;
+        }
+
+        const response = await axiosInstance.post('/shopping-list/add', data, {
             headers: { token: token }
         });
+
 
         if (response.status === 200 || response.status === 201) {
             const updatedList = response.data;
