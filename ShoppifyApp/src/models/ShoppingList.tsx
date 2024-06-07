@@ -14,4 +14,5 @@ export interface ShoppingList {
     updated_by: string;
     owner_username: string;
     is_user_owner: boolean;
+    category_color: string;
 }

@@ -13,6 +13,7 @@ interface EditListModalProps {
   listId: number;
   editMode?: boolean;
   onSave?: (list: ShoppingList) => void;
+  onCancel: () => void;
 }
 
 interface Category {
@@ -80,10 +81,8 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
   const handleCancel = () => {
     console.log("cancel");
     setEditMode(false);
-    if (list.id == -1) {
-      //todo
-      //zamknij ten modal
-      //ewnetualnie navigate back
+    if (list.id === -1) {
+      props.onCancel();
     }
   };
 

@@ -58,6 +58,10 @@ const ActiveListsScreen: React.FC = () => {
     fetchActiveLists();
   };
 
+  const onCancel = () => {
+    setModalVisible(false);
+  };
+
   const onPress = (id: number) => {
     setCurrentListId(id);
     setModalVisible(true); 
@@ -82,6 +86,7 @@ const ActiveListsScreen: React.FC = () => {
           listId={currentListId ?? -1}
           editMode={currentListId === -1}
           onSave={saveList}
+          onCancel={onCancel} 
         />
       </Modal>
     </View>

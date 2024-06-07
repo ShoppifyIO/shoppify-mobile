@@ -70,7 +70,7 @@ export const getActiveShoppingLists = async (onSuccess: (lists: ShoppingListHead
                 id: list.id,
                 name: list.title,
                 categoryName: list.category?.title,
-                categoryColor: list.category?.color,
+                categoryColor: list.category_color,
                 ownerUsername: list.owner_id?.toString(),
                 updateDate: format(new Date(list.update_date ?? list.creation_date), 'dd MMM yyyy, HH:mm'),
                 updatedBy: (list.updated_by ?? list.owner_username).toString(),
@@ -132,5 +132,6 @@ export const newShoppingList: ShoppingList = {
     shopping_items: [],
     updated_by: '',
     owner_username: '',
-    is_user_owner: false
+    is_user_owner: false,
+    category_color: ''
 };
