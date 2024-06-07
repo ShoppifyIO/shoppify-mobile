@@ -45,3 +45,23 @@ export const getFriends = async (onSuccess: (friends: Friend[]) => void, onError
     onError(error);
   }
 };
+
+
+export const shareShoppingList = async (listId: number, friendIds: number[], onSuccess: () => void, onError: (error: any) => void) => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await axiosInstance.post('/shopping-list/share', { shopping_list_id: listId, friend_ids: friendIds }, {
+            headers: { token: token }
+        });
+
+        if (response.status === 200) {
+            onSuccess();
+        } else {
+            console.error("Failed to share shopping list", response.status);
+            onError(new Error("Nie udało się udostępnić listy"));
+        }
+    } catch (error) {
+        console.error(error);
+        onError(error);
+    }
+};

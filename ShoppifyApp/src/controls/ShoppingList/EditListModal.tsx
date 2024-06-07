@@ -8,7 +8,6 @@ import ConfettiCannon from 'react-native-confetti-cannon';
 import FriendsShareModal from '../FriendShareModal';
 import CategoryPicker from '../CategoryPicker';
 import { saveShoppingList, getShoppingList, newShoppingList } from '../../services/shoppingListService';
-import { Friend } from '../../models/friend';
 
 interface EditListModalProps {
   listId: number;
@@ -81,6 +80,11 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
   const handleCancel = () => {
     console.log("cancel");
     setEditMode(false);
+    if (list.id == -1) {
+      //todo
+      //zamknij ten modal
+      //ewnetualnie navigate back
+    }
   };
 
   const handleSave = () => {
@@ -94,10 +98,6 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
       console.error(error);
       Alert.alert("Błąd", "Wystąpił błąd podczas zapisywania listy");
     });
-  };
-
-  const handleShareConfirmed = (selectedFriends: Friend[]) => {
-    console.log('List shared with:', selectedFriends);
   };
 
   const handleCategorySelect = (category: Category) => {
@@ -129,9 +129,11 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
             <TouchableOpacity style={styles.icon} onPress={() => setEditMode(true)}>
               <Ionicons name="pencil" size={28} color="gray" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.icon} onPress={() => setShareModalVisible(true)}>
-              <Ionicons name="share-social-outline" size={28} color="gray" />
-            </TouchableOpacity>
+            {list.id > 0 &&
+              <TouchableOpacity style={styles.icon} onPress={() => setShareModalVisible(true)}>
+                <Ionicons name="share-social-outline" size={28} color="gray" />
+              </TouchableOpacity>
+            }
             <TouchableOpacity style={styles.star} onPress={handleCompletion}>
               <Ionicons name={completed ? "checkmark-circle" : "checkmark-circle-outline"} size={completed ? 48 : 28} color={completed ? "#A7C7E7" : "gray"} />
             </TouchableOpacity>
@@ -185,7 +187,9 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
       <FriendsShareModal
         visible={isShareModalVisible}
         onClose={() => setShareModalVisible(false)}
-        onShareConfirmed={handleShareConfirmed}
+        onShareConfirmed={(selectedFriends) => {
+          console.log('List shared with:', selectedFriends);
+        }}
         listId={list.id}
       />
       <CategoryPicker

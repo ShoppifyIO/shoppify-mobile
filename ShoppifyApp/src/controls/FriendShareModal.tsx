@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Modal, TouchableOpacity, StyleSheet, FlatList, Image, Alert } from 'react-native';
 import { Friend } from '../models/friend';
 import { Ionicons } from '@expo/vector-icons';
-import { getFriends } from '../services/friendService';
+import { getFriends, shareShoppingList } from '../services/friendService';
 import { profileImages } from '../mocks/friendList';
 
 interface FriendsShareModalProps {
@@ -51,9 +51,18 @@ const FriendsShareModal: React.FC<FriendsShareModalProps> = ({ visible, onClose,
   };
 
   const handleShare = () => {
-    //todo: wykonać request share 
-    onShareConfirmed(selectedFriends);
-    onClose();
+    const friendIds = selectedFriends.map((friend: Friend) => friend.id);
+    shareShoppingList(listId, friendIds,
+      () => {
+        onShareConfirmed(selectedFriends);
+        onClose();
+        Alert.alert("Sukces", "Lista została udostępniona");
+      },
+      (error) => {
+        console.error(error);
+        Alert.alert("Błąd", "Nie udało się udostępnić listy");
+      }
+    );
   };
 
   const toggleFriendSelection = (friend: Friend) => {
