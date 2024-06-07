@@ -1,28 +1,58 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ListRenderItemInfo, Modal, TextInput, SafeAreaView } from 'react-native';
-import { friendsMockData, mockNewFriend } from '../mocks/friendList';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ListRenderItemInfo, Modal, TextInput, SafeAreaView, Alert } from 'react-native';
 import { Friend } from '../models/friend';
 import ActionButton from './Lists/ActionButton';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { addFriend, getFriends } from '../services/friendService';
 
 const FriendsScreen = () => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [newFriendName, setNewFriendName] = useState('');
-  const [friends, setFriends] = useState<Friend[]>(friendsMockData);
+  const [friends, setFriends] = useState<Friend[]>([]);
 
-  const addFriend = () => {
-    console.log('Adding friend:', newFriendName);
-    //todo: through api
-    setFriends([...friends, mockNewFriend(String(friends.length + 1), newFriendName)]);
-    setModalVisible(false);
-    setNewFriendName('');
+  useEffect(() => {
+    fetchFriends();
+  }, []);
+
+  const fetchFriends = () => {
+    getFriends(
+      (fetchedFriends) => {
+        setFriends(fetchedFriends);
+      },
+      (error) => {
+        console.error(error);
+        Alert.alert("Błąd", "Nie udało się pobrać listy przyjaciół");
+      }
+    );
+  };
+
+  const handleAddFriend = () => {
+    if (newFriendName.trim() === '') {
+      Alert.alert("Błąd", "Nazwa użytkownika nie może być pusta");
+      return;
+    }
+
+    addFriend(
+      newFriendName,
+      () => {
+        fetchFriends();
+        setModalVisible(false);
+        setNewFriendName('');
+      },
+      (error) => {
+        console.error(error);
+        Alert.alert("Błąd", "Nie udało się dodać przyjaciela", [
+          { text: 'OK', onPress: () => console.log('OK Pressed') },
+        ]);
+      }
+    );
   };
 
   const renderFriend = ({ item }: ListRenderItemInfo<Friend>) => (
     <TouchableOpacity style={styles.friendItem}>
       <Image source={item.image} style={styles.friendImage} />
       <View style={styles.friendTextContainer}>
-        <Text style={styles.friendName}>{item.name}</Text>
+        <Text style={styles.friendName}>{item.username}</Text>
         <Text style={styles.friendEmail}>{item.email}</Text>
       </View>
     </TouchableOpacity>
@@ -30,11 +60,17 @@ const FriendsScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <FlatList
-        data={friends}
-        renderItem={renderFriend}
-        keyExtractor={item => item.id}
-      />
+      {friends.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>Dodaj znajomego!</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={friends}
+          renderItem={renderFriend}
+          keyExtractor={item => item.id.toString()}
+        />
+      )}
       <ActionButton onPress={() => setModalVisible(true)} label="+" />
       <Modal
         visible={isModalVisible}
@@ -54,7 +90,7 @@ const FriendsScreen = () => {
               onChangeText={setNewFriendName}
               style={styles.input}
             />
-            <TouchableOpacity onPress={addFriend} style={styles.addButton}>
+            <TouchableOpacity onPress={handleAddFriend} style={styles.addButton}>
               <Text style={styles.addButtonText}>Dodaj</Text>
             </TouchableOpacity>
           </View>
@@ -68,6 +104,15 @@ const styles = StyleSheet.create({
   container: {
     paddingVertical: 50,
     flex: 1,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: 20,
+    color: '#555',
   },
   friendItem: {
     flexDirection: 'row',
