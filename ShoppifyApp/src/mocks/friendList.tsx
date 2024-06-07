@@ -15,3 +15,13 @@ export const mockNewFriend = (id: string, name: string): Friend => {
     image: require('./../../assets/profiles/image7.jpg'), 
     email: name + '@example.com' }
 }
+
+export const profileImages = [
+  require('./../../assets/profiles/image1.jpg'),
+  require('./../../assets/profiles/image2.jpg'),
+  require('./../../assets/profiles/image3.jpg'),
+  require('./../../assets/profiles/image4.jpg'),
+  require('./../../assets/profiles/image5.jpg'),
+  require('./../../assets/profiles/image6.jpg'),
+  require('./../../assets/profiles/image7.jpg')
+];

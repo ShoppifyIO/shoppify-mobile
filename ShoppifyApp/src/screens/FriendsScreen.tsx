@@ -4,16 +4,9 @@ import { Friend } from '../models/friend';
 import ActionButton from './Lists/ActionButton';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { addFriend, getFriends } from '../services/friendService';
+import { profileImages } from '../mocks/friendList';
 
-const profileImages = [
-  require('./../../assets/profiles/image1.jpg'),
-  require('./../../assets/profiles/image2.jpg'),
-  require('./../../assets/profiles/image3.jpg'),
-  require('./../../assets/profiles/image4.jpg'),
-  require('./../../assets/profiles/image5.jpg'),
-  require('./../../assets/profiles/image6.jpg'),
-  require('./../../assets/profiles/image7.jpg')
-];
+
 
 const getRandomImage = (usedImages: number[]) => {
   const availableImages = profileImages.filter(image => !usedImages.includes(image));

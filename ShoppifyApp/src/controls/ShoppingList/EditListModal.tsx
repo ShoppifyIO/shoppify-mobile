@@ -5,11 +5,10 @@ import ProductItem from './ProductItem';
 import { ShoppingList } from '../../models/ShoppingList';
 import { ShoppingListItem } from '../../models/shoppingListItem';
 import ConfettiCannon from 'react-native-confetti-cannon';
-import { friendsMockData } from '../../mocks/friendList';
-import { Friend } from '../../models/friend';
 import FriendsShareModal from '../FriendShareModal';
 import CategoryPicker from '../CategoryPicker';
 import { saveShoppingList, getShoppingList, newShoppingList } from '../../services/shoppingListService';
+import { Friend } from '../../models/friend';
 
 interface EditListModalProps {
   listId: number;
@@ -187,7 +186,7 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
         visible={isShareModalVisible}
         onClose={() => setShareModalVisible(false)}
         onShareConfirmed={handleShareConfirmed}
-        friends={friendsMockData}
+        listId={list.id}
       />
       <CategoryPicker
         visible={isCategoryPickerVisible}
