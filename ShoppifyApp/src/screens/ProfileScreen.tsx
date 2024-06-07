@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, TouchableOpacity, StyleSheet, Image, SafeAreaView } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; // Upewnij się, że masz zainstalowaną tę bibliotekę
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; 
 import { useAuth } from '../context/AuthContext';
 
 interface UserProfileScreenProps {
@@ -18,7 +18,7 @@ const ProfileScreen = (props: UserProfileScreenProps) => {
   return (
     <SafeAreaView style={userProfileStyles.profileSection}>
       <Image
-        source={require('./../../assets/profiles/bear1.jpg')} 
+        source={require('./../../assets/profiles/image1.jpg')} 
         style={userProfileStyles.profileImage}
       />
       <Text style={userProfileStyles.usernameText}>{user?.username}</Text>

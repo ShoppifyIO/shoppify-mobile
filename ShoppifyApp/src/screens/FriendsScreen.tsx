@@ -5,10 +5,27 @@ import ActionButton from './Lists/ActionButton';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { addFriend, getFriends } from '../services/friendService';
 
+const profileImages = [
+  require('./../../assets/profiles/image1.jpg'),
+  require('./../../assets/profiles/image2.jpg'),
+  require('./../../assets/profiles/image3.jpg'),
+  require('./../../assets/profiles/image4.jpg'),
+  require('./../../assets/profiles/image5.jpg'),
+  require('./../../assets/profiles/image6.jpg'),
+  require('./../../assets/profiles/image7.jpg')
+];
+
+const getRandomImage = (usedImages: number[]) => {
+  const availableImages = profileImages.filter(image => !usedImages.includes(image));
+  const randomIndex = Math.floor(Math.random() * availableImages.length);
+  return availableImages[randomIndex];
+};
+
 const FriendsScreen = () => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [newFriendName, setNewFriendName] = useState('');
   const [friends, setFriends] = useState<Friend[]>([]);
+  const [usedImages, setUsedImages] = useState<number[]>([]);
 
   useEffect(() => {
     fetchFriends();
@@ -17,7 +34,15 @@ const FriendsScreen = () => {
   const fetchFriends = () => {
     getFriends(
       (fetchedFriends) => {
-        setFriends(fetchedFriends);
+        const friendsWithImages = fetchedFriends.map(friend => {
+          const randomImage = getRandomImage(usedImages);
+          setUsedImages(prevUsedImages => [...prevUsedImages, randomImage]);
+          return {
+            ...friend,
+            image: randomImage,
+          };
+        });
+        setFriends(friendsWithImages);
       },
       (error) => {
         console.error(error);
