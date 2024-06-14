@@ -3,12 +3,7 @@ import { View, Text, TouchableOpacity, FlatList, Modal, TextInput, StyleSheet, A
 import { Ionicons } from '@expo/vector-icons';
 import ColorPicker from 'react-native-wheel-color-picker';
 import { addCategory, getCategories } from '../services/categoryService';
-
-interface Category {
-  id: number;
-  title: string;
-  color: string;
-}
+import { Category } from '../models/category';
 
 interface CategoryPickerProps {
   visible: boolean;

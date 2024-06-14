@@ -1,13 +1,15 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { View, TextInput, StyleSheet, Text, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import ProductItem from './ProductItem';
 import { ShoppingList } from '../../models/ShoppingList';
-import { ShoppingListItem } from '../../models/shoppingListItem';
+import { ShoppingListItem, createEmptyItem } from '../../models/shoppingListItem';
 import ConfettiCannon from 'react-native-confetti-cannon';
 import FriendsShareModal from '../FriendShareModal';
 import CategoryPicker from '../CategoryPicker';
-import { saveShoppingList, getShoppingList, newShoppingList } from '../../services/shoppingListService';
+import { saveShoppingList as addShoppingList, getShoppingList, modifyShoppingList, newShoppingList } from '../../services/shoppingListService';
+import { ShoppingListEdit, initShoppingListEdit, updateShoppingItem } from '../../models/edit/shoppingListEdit';
+import { Category } from '../../models/category';
 
 interface EditListModalProps {
   listId: number;
@@ -16,20 +18,13 @@ interface EditListModalProps {
   onCancel: () => void;
 }
 
-interface Category {
-  id: number;
-  title: string;
-  color: string;
-}
-
 const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) => {
-  const [name, setName] = useState<string>('');
   const [list, setList] = useState<ShoppingList>(newShoppingList);
   const [editMode, setEditMode] = useState<boolean>(props.editMode ?? false);
+  const [listModifications, setListModifications] = useState<ShoppingListEdit | null>(null);
   const [completed, setCompleted] = useState(false);
   const [isShareModalVisible, setShareModalVisible] = useState(false);
   const [isCategoryPickerVisible, setCategoryPickerVisible] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const confettiRef = useRef<ConfettiCannon>(null);
 
   useEffect(() => {
@@ -41,8 +36,6 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
         props.listId,
         (fetchedList) => {
           setList(fetchedList);
-          setName(fetchedList.title);
-          setSelectedCategory(fetchedList.category ? { id: fetchedList.category.id, title: fetchedList.category.title, color: fetchedList.category.color } : null);
         },
         (error) => {
           console.error(error);
@@ -54,27 +47,46 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
 
   useEffect(() => {
     if (editMode && list.shopping_items.length > 0) {
-      addItem();
+      addEmptyItem();
     }
   }, [editMode]);
+
+  const hasListModificationObject: boolean = useMemo(() => {
+    return list.id !== -1 && listModifications !== null;
+  }, [list, listModifications])
 
   const handleItemChange = (item: ShoppingListItem, index: number) => {
     const newItems = [...list.shopping_items];
     newItems[index] = item;
     setList((previousList: ShoppingList) => ({ ...previousList, shopping_items: newItems }));
+    
+    if (hasListModificationObject) {
+      setListModifications((prev: ShoppingListEdit | null) => {
+        return prev === null ? null : updateShoppingItem(prev, item);
+      });
+    }
   };
 
-  const addItem = () => {
-
+  const addEmptyItem = () => {
     if (list.shopping_items[0]?.name == "") {
       return;
     }
 
-    const newItem = { name: '', isCompleted: false, quantity: 1 };
-    setList((previousList: ShoppingList) => ({
-      ...previousList,
-      shopping_items: [newItem, ...previousList.shopping_items]
+    const newEmptyItem: ShoppingListItem = createEmptyItem(list.shopping_items);
+
+    setList((prevList: ShoppingList) => ({
+      ...prevList,
+      shopping_items: [newEmptyItem, ...prevList.shopping_items]
     }));
+
+    if (hasListModificationObject) {
+      setListModifications((prev: ShoppingListEdit | null) => {
+        return prev === null ? null : {
+          ...prev,
+          new_shopping_items: [newEmptyItem, ...prev.new_shopping_items]
+        }
+      });
+    }
   };
 
   const handleCompletion = () => {
@@ -87,36 +99,83 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
   const handleCancel = () => {
     console.log("cancel");
     setEditMode(false);
+    setListModifications(null);
     if (list.id === -1) {
       props.onCancel();
     }
   };
 
   const handleSave = () => {
-    saveShoppingList(name, list.shopping_items.filter(e => e.name !== ""), selectedCategory ? selectedCategory.id : null, (updatedList) => {
-      if (props.onSave) {
-        props.onSave(updatedList);
-      }
+    const handleSaveSuccess = (updatedList: any) => {
+      props.onSave?.(updatedList);
       console.log("List saved successfully");
       setEditMode(false);
-    }, (error) => {
+      setListModifications(null);
+    }
+
+    const handleSaveError = (error: any) => {
       console.error(error);
       Alert.alert("Błąd", "Wystąpił błąd podczas zapisywania listy");
-    });
+    }
+
+    if (hasListModificationObject && listModifications) {
+      modifyShoppingList(listModifications, handleSaveSuccess, handleSaveError);
+    } else {
+      addShoppingList(list.title, list.shopping_items.filter(e => e.name !== ""), list.category?.id ?? null, handleSaveSuccess, handleSaveError);
+    }
   };
 
   const handleCategorySelect = (category: Category) => {
-    setSelectedCategory(category);
+    setList((prev: ShoppingList) => ({
+      ...prev,
+      category: category
+    }));
+
     setCategoryPickerVisible(false);
+
+    if (hasListModificationObject) {
+      setListModifications((prev: ShoppingListEdit | null) => {
+        return prev === null ? null : {
+          ...prev,
+          category_id: category.id,
+          isCategoryEdited: true
+        }
+      });
+    }
   };
+
+  const handleTitleChange = (newTitle: string) => {
+    setList((prev: ShoppingList) => ({
+      ...prev,
+      title: newTitle
+    }));
+
+    if (hasListModificationObject) {
+      setListModifications((prev: ShoppingListEdit | null) => {
+        return prev === null ? null : {
+          ...prev,
+          title: newTitle,
+          isTitleEdited: true
+        }
+      });
+    }
+  }
+
+  const startEditing = () => {
+    setEditMode(true);
+
+    if (list.id > 0) {
+      setListModifications(initShoppingListEdit(list.id));
+    }
+  }
 
   return (
     <View style={[styles.modalContainer, { backgroundColor: completed ? '#f0f0f0' : 'white' }]}>
       <View style={styles.header}>
         <TextInput
           style={styles.input}
-          value={name}
-          onChangeText={setName}
+          value={list.title}
+          onChangeText={handleTitleChange}
           placeholder={editMode ? "Nazwa listy" : ""}
           editable={editMode}
         />
@@ -131,7 +190,7 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
           </View>
         ) : (
           <View style={styles.iconContainer}>
-            <TouchableOpacity style={styles.icon} onPress={() => setEditMode(true)}>
+            <TouchableOpacity style={styles.icon} onPress={startEditing}>
               <Ionicons name="pencil" size={28} color="gray" />
             </TouchableOpacity>
             {list.id > 0 &&
@@ -147,17 +206,17 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
       </View>
 
       <TouchableOpacity
-        style={[styles.button, { backgroundColor: selectedCategory ? selectedCategory.color : '#ddd' }]}
+        style={[styles.button, { backgroundColor: list.category?.color ?? '#ddd' }]}
         onPress={() => setCategoryPickerVisible(true)}
       >
         <Text style={styles.buttonText}>
-          {selectedCategory ? selectedCategory.title : 'Wybierz kategorię'}
+          {list.category?.title ?? 'Wybierz kategorię'}
         </Text>
       </TouchableOpacity>
 
       <>
         {editMode && list.shopping_items.length === 0 && (
-          <TouchableOpacity style={styles.button} onPress={addItem}>
+          <TouchableOpacity style={styles.button} onPress={addEmptyItem}>
             <Text style={styles.buttonText}>Let's go!</Text>
           </TouchableOpacity>
         )}
@@ -169,7 +228,7 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
               isCompleted={item.isCompleted}
               onNameChange={(text) => handleItemChange({ ...item, name: text }, index)}
               onCompletedChange={(newValue) => handleItemChange({ ...item, isCompleted: newValue }, index)}
-              onAddNewItem={addItem}
+              onAddNewItem={addEmptyItem}
               readOnly={!editMode}
               checkDisabled={completed}
               isOdd={index % 2 == 1}

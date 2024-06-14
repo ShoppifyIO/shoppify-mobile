@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ShoppingList } from '../models/ShoppingList';
 import { ShoppingListHeader } from '../models/shoppingListHeader';
 import { format } from 'date-fns';
+import { ShoppingListEdit } from '../models/edit/shoppingListEdit';
 
 export const saveShoppingList = async (title: string, items: any[], categoryId: number | null, onSuccess: (list: ShoppingList) => void, onError: (error: any) => void) => {
     try {
@@ -39,43 +40,45 @@ export const saveShoppingList = async (title: string, items: any[], categoryId: 
 };
 
 export const modifyShoppingList = async (
-    id: number,
-    title: string,
-    newItems: any[],
-    modifiedItems: any[],
-    deletedItems: any[],
-    categoryId: number | null,
+    shoppingListEdit: ShoppingListEdit,
     onSuccess: (list: ShoppingList) => void,
     onError: (error: any) => void
-  ) => {
+) => {
     try {
-      const token = await AsyncStorage.getItem('token');
-      const data: any = {
-        id: id,
-        title: title,
-        category_id: categoryId,
-        new_shopping_items: newItems,
-        modified_shopping_items: modifiedItems,
-        deleted_shopping_items: deletedItems.map(item => ({ id: item.id }))
-      };
-  
-      const response = await axiosInstance.post('/shopping-list/modify', data, {
-        headers: { token: token }
-      });
-  
-      if (response.status === 200 || response.status === 201) {
-        const updatedList = response.data;
-        onSuccess(updatedList);
-      } else {
-        console.error("Failed to modify the list", response.status);
-        onError(new Error("Nie udało się zmodyfikować listy"));
-      }
+        const token = await AsyncStorage.getItem('token');
+
+        const data: any = {
+            id: Number(shoppingListEdit.id),
+            new_shopping_items: shoppingListEdit.new_shopping_items.filter(item => item.name !== ''),
+            modified_shopping_items: shoppingListEdit.edited_shopping_items.filter(item => item.name !== ''),
+            deleted_shopping_items: shoppingListEdit.deleted_shopping_item_ids
+        };
+
+        if (shoppingListEdit.isTitleEdited) {
+            data.title = shoppingListEdit.title;
+        }
+
+        if (shoppingListEdit.isCategoryEdited) {
+            data.category_id = shoppingListEdit.category_id;
+        }
+
+        const response = await axiosInstance.post('/shopping-list/modify', data, {
+            headers: { token: token }
+        });
+
+        if (response.status === 200 || response.status === 201) {
+            const updatedList = response.data;
+            onSuccess(updatedList);
+        } else {
+            console.error("Failed to modify the list", response.status);
+            onError(new Error("Nie udało się zmodyfikować listy"));
+        }
     } catch (error) {
-      console.error(error);
-      onError(error);
+        console.error(error);
+        onError(error);
     }
-  };
-  
+};
+
 
 export const getShoppingList = async (id: number, onSuccess: (list: ShoppingList) => void, onError: (error: any) => void) => {
     try {
@@ -162,12 +165,7 @@ export const newShoppingList: ShoppingList = {
     creation_date: new Date().toISOString(),
     update_date: new Date().toISOString(),
     is_completed: false,
-    category: {
-        id: -1,
-        owner_id: -1,
-        title: '',
-        color: ''
-    },
+    category: undefined,
     shopping_items: [],
     updated_by: '',
     owner_username: '',
