@@ -2,10 +2,9 @@ import React, { useEffect, useRef } from 'react';
 import { View, TextInput, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import CustomCheckbox from '../../controls/CustomCheckbox';
+import { ShoppingListItem } from '../../models/shoppingListItem';
 
 interface ProductItemProps {
-  name: string;
-  isCompleted: boolean;
   onNameChange: (text: string) => void;
   onCompletedChange: (newValue: boolean) => void;
   onAddNewItem: () => void;
@@ -13,6 +12,7 @@ interface ProductItemProps {
   checkDisabled: boolean;
   isOdd: boolean;
   onDeleted: () => void;
+  item: ShoppingListItem;
 }
 
 const ProductItem: React.FC<ProductItemProps> = (props: ProductItemProps) => {
@@ -20,20 +20,20 @@ const ProductItem: React.FC<ProductItemProps> = (props: ProductItemProps) => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (props.name === '' && inputRef.current) {
+      if (props.item?.name === '' && inputRef.current) {
         inputRef.current.focus();
       }
     }, 100);
 
     return () => clearTimeout(timer);
-  }, [props.name]);
+  }, [props.item?.name]);
 
   return (
     <View style={[styles.itemContainer, props.isOdd ? styles.oddItem : {}]}>
       <TextInput
         style={styles.itemInput}
         ref={inputRef}
-        value={props.name}
+        value={props.item?.name}
         onChangeText={props.onNameChange}
         placeholder="Nazwa produktu"
         placeholderTextColor="#999"
@@ -42,7 +42,7 @@ const ProductItem: React.FC<ProductItemProps> = (props: ProductItemProps) => {
       />
       <CustomCheckbox
         disabled={props.checkDisabled}
-        isChecked={props.isCompleted}
+        isChecked={props.item?.is_completed}
         onCheckChange={props.onCompletedChange}
       />
       {!props.readOnly && (

@@ -2,7 +2,7 @@ export interface ShoppingListItem {
     id: number,
     name: string;
     quantity: number;
-    isCompleted: boolean;
+    is_completed: boolean;
 }
 
 export function createEmptyItem(currentListItems: ShoppingListItem[]): ShoppingListItem {
@@ -10,7 +10,7 @@ export function createEmptyItem(currentListItems: ShoppingListItem[]): ShoppingL
 
     const newEmptyItem: ShoppingListItem = {
         id: 0,
-        isCompleted: false,
+        is_completed: false,
         name: '',
         quantity: 1
     }

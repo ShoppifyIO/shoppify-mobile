@@ -10,6 +10,7 @@ import CategoryPicker from '../CategoryPicker';
 import { saveShoppingList as addShoppingList, getShoppingList, modifyShoppingList, newShoppingList } from '../../services/shoppingListService';
 import { ShoppingListEdit, initShoppingListEdit, updateShoppingItem } from '../../models/edit/shoppingListEdit';
 import { Category } from '../../models/category';
+import { completeShoppingListItem, incompleteShoppingListItem } from '../../services/shoppingListItemService';
 
 interface EditListModalProps {
   listId: number;
@@ -63,6 +64,28 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
     if (hasListModificationObject) {
       setListModifications((prev: ShoppingListEdit | null) => {
         return prev === null ? null : updateShoppingItem(prev, item);
+      });
+    }
+  };
+
+  const handleItemCompleted = (item: ShoppingListItem, index: number) => {
+    const newItems = [...list.shopping_items];
+    newItems[index] = item;
+    setList((previousList: ShoppingList) => ({ ...previousList, shopping_items: newItems }));
+    
+    if (item.is_completed) {
+      completeShoppingListItem(item.id, () => {
+        console.log("Item completed successfully");
+      }, (error) => {
+        console.error("Failed to complete item", error);
+        Alert.alert("Błąd", "Wystąpił błąd podczas oznaczania elementu jako ukończony");
+      });
+    } else {
+      incompleteShoppingListItem(item.id, () => {
+        console.log("Item marked as incomplete successfully");
+      }, (error) => {
+        console.error("Failed to mark item as incomplete", error);
+        Alert.alert("Błąd", "Wystąpił błąd podczas oznaczania elementu jako nieukończony");
       });
     }
   };
@@ -240,6 +263,7 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
       <TouchableOpacity
         style={[styles.button, { backgroundColor: list.category?.color ?? '#ddd' }]}
         onPress={() => setCategoryPickerVisible(true)}
+        disabled={!editMode}
       >
         <Text style={styles.buttonText}>
           {list.category?.title ?? 'Wybierz kategorię'}
@@ -256,10 +280,9 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
           data={list.shopping_items}
           renderItem={({ item, index }) => (
             <ProductItem
-              name={item.name}
-              isCompleted={item.isCompleted}
+              item={item}
               onNameChange={(text) => handleItemChange({ ...item, name: text }, index)}
-              onCompletedChange={(newValue) => handleItemChange({ ...item, isCompleted: newValue }, index)}
+              onCompletedChange={(newValue) => handleItemCompleted({ ...item, is_completed: newValue }, index)}
               onAddNewItem={addEmptyItem}
               readOnly={!editMode}
               checkDisabled={completed || editMode}
