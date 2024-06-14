@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, Text, StyleSheet, Alert } from 'react-native';
+import { View, FlatList, Text, StyleSheet, Alert, RefreshControl } from 'react-native';
 import { ShoppingListHeader } from '../../models/shoppingListHeader';
 import { getArchivedShoppingLists } from '../../services/shoppingListService';
+import ListHeader from './ListHeader';
+import { listStyles } from './listStyles';
 
 const HistoryScreen: React.FC = () => {
   const [archivedLists, setArchivedLists] = useState<ShoppingListHeader[]>([]);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
 
   useEffect(() => {
     fetchArchivedLists();
@@ -14,58 +17,35 @@ const HistoryScreen: React.FC = () => {
     getArchivedShoppingLists(
       (fetchedLists) => {
         setArchivedLists(fetchedLists);
+        setRefreshing(false);
       },
       (error) => {
         console.error(error);
         Alert.alert("Błąd", "Nie udało się pobrać archiwalnych list");
+        setRefreshing(false);
       }
     );
   };
 
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchArchivedLists();
+  };
+
+
   return (
-    <View style={styles.container}>
-      {archivedLists.length > 0 ? (
+    <View style={listStyles.container}>
         <FlatList
-          data={archivedLists}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <View style={styles.listItem}>
-              <Text style={styles.title}>{item.name}</Text>
-              <Text style={styles.details}>{item.updateDate}</Text>
-            </View>
-          )}
-        />
-      ) : (
-        <Text style={styles.text}>Brak archiwalnych list</Text>
-      )}
+        data={archivedLists}
+        renderItem={({ item }) => <ListHeader onPress={()=>{}} model={item}/>}
+        keyExtractor={(item) => item.id.toString()}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      />
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  text: {
-    fontSize: 20,
-  },
-  listItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-    width: '100%',
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  details: {
-    fontSize: 14,
-    color: 'gray',
-  },
-});
 
 export default HistoryScreen;

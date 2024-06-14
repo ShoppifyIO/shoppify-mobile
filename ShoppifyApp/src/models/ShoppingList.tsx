@@ -15,4 +15,5 @@ export interface ShoppingList {
     owner_username: string;
     is_user_owner: boolean;
     category_color: string;
+    category_name: string;
 }

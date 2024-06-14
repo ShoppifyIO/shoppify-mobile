@@ -38,6 +38,45 @@ export const saveShoppingList = async (title: string, items: any[], categoryId: 
     }
 };
 
+export const modifyShoppingList = async (
+    id: number,
+    title: string,
+    newItems: any[],
+    modifiedItems: any[],
+    deletedItems: any[],
+    categoryId: number | null,
+    onSuccess: (list: ShoppingList) => void,
+    onError: (error: any) => void
+  ) => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      const data: any = {
+        id: id,
+        title: title,
+        category_id: categoryId,
+        new_shopping_items: newItems,
+        modified_shopping_items: modifiedItems,
+        deleted_shopping_items: deletedItems.map(item => ({ id: item.id }))
+      };
+  
+      const response = await axiosInstance.post('/shopping-list/modify', data, {
+        headers: { token: token }
+      });
+  
+      if (response.status === 200 || response.status === 201) {
+        const updatedList = response.data;
+        onSuccess(updatedList);
+      } else {
+        console.error("Failed to modify the list", response.status);
+        onError(new Error("Nie udało się zmodyfikować listy"));
+      }
+    } catch (error) {
+      console.error(error);
+      onError(error);
+    }
+  };
+  
+
 export const getShoppingList = async (id: number, onSuccess: (list: ShoppingList) => void, onError: (error: any) => void) => {
     try {
         const token = await AsyncStorage.getItem('token');
@@ -69,7 +108,7 @@ export const getActiveShoppingLists = async (onSuccess: (lists: ShoppingListHead
             const lists = response.data.map((list: ShoppingList) => ({
                 id: list.id,
                 name: list.title,
-                categoryName: list.category?.title,
+                categoryName: list.category_name,
                 categoryColor: list.category_color,
                 ownerUsername: list.owner_id?.toString(),
                 updateDate: format(new Date(list.update_date ?? list.creation_date), 'dd MMM yyyy, HH:mm'),
@@ -98,8 +137,8 @@ export const getArchivedShoppingLists = async (onSuccess: (lists: ShoppingListHe
             const lists = response.data.map((list: ShoppingList) => ({
                 id: list.id,
                 name: list.title,
-                categoryName: list.category?.title,
-                categoryColor: list.category?.color,
+                categoryName: list.category_name,
+                categoryColor: list.category_color,
                 ownerUsername: list.owner_id?.toString(),
                 updateDate: format(new Date(list.update_date ?? list.creation_date), 'dd MMM yyyy, HH:mm'),
                 updatedBy: (list.updated_by ?? list.owner_username).toString(),
@@ -133,5 +172,6 @@ export const newShoppingList: ShoppingList = {
     updated_by: '',
     owner_username: '',
     is_user_owner: false,
-    category_color: ''
+    category_color: '',
+    category_name: ''
 };
