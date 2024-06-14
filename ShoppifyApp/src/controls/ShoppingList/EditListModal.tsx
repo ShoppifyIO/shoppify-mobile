@@ -168,6 +168,7 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
       setListModifications(initShoppingListEdit(list.id));
     }
   }
+
   const handleDelete = (index: number) => {
     const itemToDelete = list.shopping_items[index];
 
@@ -176,13 +177,25 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
       return { ...prevList, shopping_items: newItems };
     });
 
-    if (itemToDelete.id !== -1 && hasListModificationObject) {
+    if(!hasListModificationObject){
+      return;
+    }
+
+    if (itemToDelete.id < 0) {  // New unsaved item, remove from new_shopping_items
       setListModifications((prev: ShoppingListEdit | null) => {
         if (!prev) return null;
-
         return {
           ...prev,
-          deleted_shopping_item_ids: [...prev.deleted_shopping_item_ids, itemToDelete.id]
+          new_shopping_items: prev.new_shopping_items.filter(item => item.id !== itemToDelete.id),
+        };
+      });
+    } else {  // Existing item, add to deleted_shopping_item_ids
+      setListModifications((prev: ShoppingListEdit | null) => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          deleted_shopping_item_ids: [...prev.deleted_shopping_item_ids, itemToDelete.id],
+          edited_shopping_items: prev.edited_shopping_items.filter(item => item.id !== itemToDelete.id),
         };
       });
     }
