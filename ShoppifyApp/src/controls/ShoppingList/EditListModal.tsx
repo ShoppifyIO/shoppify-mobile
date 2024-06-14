@@ -168,10 +168,25 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
       setListModifications(initShoppingListEdit(list.id));
     }
   }
+  const handleDelete = (index: number) => {
+    const itemToDelete = list.shopping_items[index];
 
-  function handleDelete(index: number) {
-    console.log("deleted index", index);
-  }
+    setList((prevList: ShoppingList) => {
+      const newItems = prevList.shopping_items.filter((_, i) => i !== index);
+      return { ...prevList, shopping_items: newItems };
+    });
+
+    if (itemToDelete.id !== -1 && hasListModificationObject) {
+      setListModifications((prev: ShoppingListEdit | null) => {
+        if (!prev) return null;
+
+        return {
+          ...prev,
+          deleted_shopping_item_ids: [...prev.deleted_shopping_item_ids, itemToDelete.id]
+        };
+      });
+    }
+  };
 
   return (
     <View style={[styles.modalContainer, { backgroundColor: completed ? '#f0f0f0' : 'white' }]}>

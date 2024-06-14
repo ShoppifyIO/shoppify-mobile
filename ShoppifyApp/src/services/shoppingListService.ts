@@ -51,7 +51,7 @@ export const modifyShoppingList = async (
             id: Number(shoppingListEdit.id),
             new_shopping_items: shoppingListEdit.new_shopping_items.filter(item => item.name !== ''),
             modified_shopping_items: shoppingListEdit.edited_shopping_items.filter(item => item.name !== ''),
-            deleted_shopping_items: shoppingListEdit.deleted_shopping_item_ids
+            deleted_shopping_items: shoppingListEdit.deleted_shopping_item_ids.map((elemId: number) => ({ id: elemId }))
         };
 
         if (shoppingListEdit.isTitleEdited) {

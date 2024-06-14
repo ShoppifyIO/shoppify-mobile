@@ -1,6 +1,4 @@
-import { Category } from "../category";
 import { ShoppingListItem } from "../shoppingListItem";
-
 
 export interface ShoppingListEdit {
     id: number;
@@ -17,7 +15,7 @@ export interface ShoppingListEdit {
 }
 
 export function initShoppingListEdit(id: number): ShoppingListEdit {
-    const shoppingListEdit: ShoppingListEdit = {
+    return {
         id: id,
         title: "",
         isTitleEdited: false,
@@ -27,8 +25,6 @@ export function initShoppingListEdit(id: number): ShoppingListEdit {
         edited_shopping_items: [],
         new_shopping_items: []
     };
-
-    return shoppingListEdit;
 }
 
 export function updateShoppingItem(shoppingListEdit: ShoppingListEdit, newItem: ShoppingListItem): ShoppingListEdit {
