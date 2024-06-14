@@ -217,7 +217,7 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
               <Ionicons name="checkmark" size={32} color="gray" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.cancelIcon} onPress={handleCancel}>
-              <Ionicons name="close" size={32} color="gray" />
+              <Ionicons name="return-down-back" size={32} color="gray" />
             </TouchableOpacity>
           </View>
         ) : (
