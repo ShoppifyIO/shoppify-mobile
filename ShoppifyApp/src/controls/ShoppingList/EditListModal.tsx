@@ -169,6 +169,10 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
     }
   }
 
+  function handleDelete(index: number) {
+    console.log("deleted index", index);
+  }
+
   return (
     <View style={[styles.modalContainer, { backgroundColor: completed ? '#f0f0f0' : 'white' }]}>
       <View style={styles.header}>
@@ -230,8 +234,9 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
               onCompletedChange={(newValue) => handleItemChange({ ...item, isCompleted: newValue }, index)}
               onAddNewItem={addEmptyItem}
               readOnly={!editMode}
-              checkDisabled={completed}
+              checkDisabled={completed || editMode}
               isOdd={index % 2 == 1}
+              onDeleted={()=> handleDelete(index)}
             />
           )}
           keyExtractor={(_, index) => index.toString()}

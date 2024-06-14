@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import { View, TextInput, StyleSheet, Dimensions } from 'react-native';
+import { View, TextInput, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import CustomCheckbox from '../../controls/CustomCheckbox';
 
 interface ProductItemProps {
@@ -11,6 +12,7 @@ interface ProductItemProps {
   readOnly: boolean;
   checkDisabled: boolean;
   isOdd: boolean;
+  onDeleted: () => void;
 }
 
 const ProductItem: React.FC<ProductItemProps> = (props: ProductItemProps) => {
@@ -37,14 +39,17 @@ const ProductItem: React.FC<ProductItemProps> = (props: ProductItemProps) => {
         placeholderTextColor="#999"
         onSubmitEditing={props.onAddNewItem}
         readOnly={props.readOnly}
-        
-        
       />
       <CustomCheckbox
         disabled={props.checkDisabled}
         isChecked={props.isCompleted}
         onCheckChange={props.onCompletedChange}
       />
+      {!props.readOnly && (
+        <TouchableOpacity onPress={props.onDeleted}>
+          <Ionicons name="close-outline" size={24} color="gray" style={styles.deleteIcon} />
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -64,11 +69,14 @@ const styles = StyleSheet.create({
     marginRight: 10,
     borderRadius: 5,
     color: 'black',
-    marginLeft: 10
+    marginLeft: 10,
   },
   oddItem: {
     backgroundColor: '#f7f7f7',  // A light gray color for odd items
-  }
+  },
+  deleteIcon: {
+    marginLeft: 10,
+  },
 });
 
 export default ProductItem;
