@@ -33,6 +33,9 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
   const confettiRef = useRef<ConfettiCannon>(null);
 
   useEffect(() => {
+    if (editMode == true) {
+      return;
+    }
     if (props.listId !== -1) {
       getShoppingList(
         props.listId,
@@ -62,13 +65,16 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
   };
 
   const addItem = () => {
-    if (list.shopping_items[0]?.name !== "") {
-      const newItem = { name: '', isCompleted: false, quantity: 1 };
-      setList((previousList: ShoppingList) => ({
-        ...previousList,
-        shopping_items: [newItem, ...previousList.shopping_items]
-      }));
+
+    if (list.shopping_items[0]?.name == "") {
+      return;
     }
+
+    const newItem = { name: '', isCompleted: false, quantity: 1 };
+    setList((previousList: ShoppingList) => ({
+      ...previousList,
+      shopping_items: [newItem, ...previousList.shopping_items]
+    }));
   };
 
   const handleCompletion = () => {
