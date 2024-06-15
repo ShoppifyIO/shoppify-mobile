@@ -5,7 +5,7 @@ import { ShoppingListHeader } from '../../models/shoppingListHeader';
 import { listStyles } from './listStyles';
 import ListHeader from './ListHeader';
 import ActionButton from './ActionButton';
-import { getActiveShoppingLists } from '../../services/shoppingListService';
+import { getActiveShoppingLists, deleteShoppingList } from '../../services/shoppingListService';
 import { ShoppingList } from '../../models/ShoppingList';
 
 const ActiveListsScreen: React.FC = () => {
@@ -72,6 +72,21 @@ const ActiveListsScreen: React.FC = () => {
     onRefresh();
   };
 
+  const deleteList = (id: number) => {
+    deleteShoppingList(
+      id,
+      () => {
+        setLists(lists.filter(list => list.id !== id));
+        closeModal();
+        Alert.alert("Sukces", "Usunięto listę");
+      },
+      (error) => {
+        console.error(error);
+        Alert.alert("Błąd", "Nie udało się usunąć listy");
+      }
+    );
+  };
+
   return (
     <View style={listStyles.container}>
       <FlatList
@@ -92,6 +107,7 @@ const ActiveListsScreen: React.FC = () => {
           editMode={currentListId === -1}
           onSave={saveList}
           onCancel={onCancel}
+          onDeleteList={() => deleteList(currentListId!)}
         />
       </Modal>
     </View>

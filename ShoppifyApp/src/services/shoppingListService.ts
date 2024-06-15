@@ -206,6 +206,29 @@ export const incompleteShoppingList = async (
     }
 };
 
+export const deleteShoppingList = async (
+    listId: number,
+    onSuccess: () => void,
+    onError: (error: any) => void
+) => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await axiosInstance.delete(`/shopping-list/delete/${listId}`, {
+            headers: { token: token }
+        });
+
+        if (response.status === 200 || response.status === 204) {
+            onSuccess();
+        } else {
+            console.error("Failed to delete the list", response.status);
+            onError(new Error("Nie udało się usunąć listy"));
+        }
+    } catch (error) {
+        console.error(error);
+        onError(error);
+    }
+};
+
 
 export const newShoppingList: ShoppingList = {
     id: -1,

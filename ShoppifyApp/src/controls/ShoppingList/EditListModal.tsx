@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { View, TextInput, StyleSheet, Text, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { MenuItem, MenuDivider, Menu } from 'react-native-material-menu';
 import ProductItem from './ProductItem';
 import { ShoppingList } from '../../models/ShoppingList';
 import { ShoppingListItem, createEmptyItem } from '../../models/shoppingListItem';
@@ -17,6 +18,7 @@ interface EditListModalProps {
   editMode?: boolean;
   onSave?: (list: ShoppingList) => void;
   onCancel: () => void;
+  onDeleteList: (id: number) => void; 
 }
 
 const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) => {
@@ -25,6 +27,7 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
   const [listModifications, setListModifications] = useState<ShoppingListEdit | null>(null);
   const [isShareModalVisible, setShareModalVisible] = useState(false);
   const [isCategoryPickerVisible, setCategoryPickerVisible] = useState(false);
+  const [menuVisible, setMenuVisible] = useState<boolean>(false);
   const confettiRef = useRef<ConfettiCannon>(null);
 
   useEffect(() => {
@@ -59,7 +62,7 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
     const newItems = [...list.shopping_items];
     newItems[index] = item;
     setList((previousList: ShoppingList) => ({ ...previousList, shopping_items: newItems }));
-    
+
     if (hasListModificationObject) {
       setListModifications((prev: ShoppingListEdit | null) => {
         return prev === null ? null : updateShoppingItem(prev, item);
@@ -71,7 +74,7 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
     const newItems = [...list.shopping_items];
     newItems[index] = item;
     setList((previousList: ShoppingList) => ({ ...previousList, shopping_items: newItems }));
-    
+
     if (item.is_completed) {
       completeShoppingListItem(item.id, () => {
         console.log("Item completed successfully");
@@ -116,7 +119,7 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
       ...prev,
       is_completed: !prev.is_completed
     }));
-    
+
     if (list.id !== -1) {
       if (list.is_completed) {
         incompleteShoppingList(list.id, (updatedList) => {
@@ -136,7 +139,7 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
         });
       }
     }
-    
+
     if (!list.is_completed && confettiRef.current) {
       confettiRef.current.start();
     }
@@ -223,7 +226,7 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
       return { ...prevList, shopping_items: newItems };
     });
 
-    if(!hasListModificationObject){
+    if (!hasListModificationObject) {
       return;
     }
 
@@ -245,6 +248,24 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
         };
       });
     }
+  };
+
+  const showMenu = () => {
+    setMenuVisible(true);
+  };
+
+  const hideMenu = () => {
+    setMenuVisible(false);
+  };
+
+  const handleShare = () => {
+    hideMenu();
+    setShareModalVisible(true);
+  };
+
+  const handleDeleteList = () => {
+    hideMenu();
+    props.onDeleteList?.(list.id);
   };
 
   return (
@@ -271,14 +292,25 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
             <TouchableOpacity style={styles.icon} onPress={startEditing}>
               <Ionicons name="pencil" size={28} color="gray" />
             </TouchableOpacity>
-            {list.id > 0 &&
-              <TouchableOpacity style={styles.icon} onPress={() => setShareModalVisible(true)}>
-                <Ionicons name="share-social-outline" size={28} color="gray" />
-              </TouchableOpacity>
-            }
             <TouchableOpacity disabled={list.id === -1} style={styles.star} onPress={handleCompletion}>
               <Ionicons name={list.is_completed ? "checkmark-circle" : "checkmark-circle-outline"} size={list.is_completed ? 48 : 28} color={list.is_completed ? "#A7C7E7" : "gray"} />
             </TouchableOpacity>
+            {list.id > 0 &&
+              <Menu
+                visible={menuVisible}
+                anchor={<Ionicons style={styles.menuIcon} name="menu" size={32} color="gray" onPress={showMenu} />}
+                onRequestClose={hideMenu}
+                style={styles.menu}
+              >
+                <MenuItem onPress={handleShare}>
+                  <Ionicons name='share-social-outline' size={18} color='gray' />{"  Udostępnij"}
+                </MenuItem>
+                <MenuItem onPress={handleDeleteList}>
+                  <Ionicons name='trash' size={18} color='gray' />{"  Usuń listę"}
+                </MenuItem>
+                <MenuDivider />
+              </Menu>
+            }
           </View>
         )}
       </View>
@@ -310,7 +342,7 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
               readOnly={!editMode}
               checkDisabled={list.is_completed || editMode}
               isOdd={index % 2 == 1}
-              onDeleted={()=> handleDelete(index)}
+              onDeleted={() => handleDelete(index)}
             />
           )}
           keyExtractor={(_, index) => index.toString()}
@@ -393,6 +425,13 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
   },
+  menuIcon: {
+    marginLeft: 10,
+  },
+  menu: {
+    marginTop: 30,
+    width: 130
+  }
 });
 
 export default EditListModal;

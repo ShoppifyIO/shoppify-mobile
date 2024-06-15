@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, FlatList, Text, StyleSheet, Alert, RefreshControl, Modal } from 'react-native';
 import { ShoppingListHeader } from '../../models/shoppingListHeader';
-import { getArchivedShoppingLists } from '../../services/shoppingListService';
+import { deleteShoppingList, getArchivedShoppingLists } from '../../services/shoppingListService';
 import ListHeader from './ListHeader';
 import { listStyles } from './listStyles';
 import EditListModal from '../../controls/ShoppingList/EditListModal';
@@ -66,6 +66,21 @@ const HistoryScreen: React.FC = () => {
     onRefresh();
   };
 
+  const deleteList = (id: number) => {
+    deleteShoppingList(
+      id,
+      () => {
+        setArchivedLists(archivedLists.filter(list => list.id !== id));
+        closeModal();
+        Alert.alert("Sukces", "Usunięto listę");
+      },
+      (error) => {
+        console.error(error);
+        Alert.alert("Błąd", "Nie udało się usunąć listy");
+      }
+    );
+  };
+  
   return (
     <View style={listStyles.container}>
       <FlatList
@@ -85,6 +100,7 @@ const HistoryScreen: React.FC = () => {
           editMode={false}
           onSave={saveList}
           onCancel={onCancel}
+          onDeleteList={deleteList}
         />
       </Modal>
     </View>
