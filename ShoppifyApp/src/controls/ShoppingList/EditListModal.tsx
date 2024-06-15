@@ -316,7 +316,8 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
       </View>
 
       <TouchableOpacity
-        style={[styles.button, { backgroundColor: list.category?.color ?? '#ddd' }]}
+
+        style={[styles.button, { backgroundColor: list.category?.color ?? '#ddd' , opacity: editMode ? 1 : 0.6}]}
         onPress={() => setCategoryPickerVisible(true)}
         disabled={!editMode}
       >

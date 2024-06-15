@@ -48,3 +48,22 @@ export const addCategory = async (title: string, color: string, onSuccess: (cate
         onError(error);
     }
 };
+
+export const deleteCategory = async (id: number, onSuccess: () => void, onError: (error: any) => void) => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await axiosInstance.delete(`/categories/delete/${id}`, {
+            headers: { token: token }
+        });
+
+        if (response.status === 200 || response.status === 204) {
+            onSuccess();
+        } else {
+            console.error("Failed to delete category", response.status);
+            onError(new Error("Nie udało się usunąć kategorii"));
+        }
+    } catch (error) {
+        console.error(error);
+        onError(error);
+    }
+};

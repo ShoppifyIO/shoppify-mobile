@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, FlatList, Modal, TextInput, StyleSheet, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import ColorPicker from 'react-native-wheel-color-picker';
-import { addCategory, getCategories } from '../services/categoryService';
+import { addCategory, getCategories, deleteCategory } from '../services/categoryService';
 import { Category } from '../models/category';
 
 interface CategoryPickerProps {
@@ -18,6 +18,7 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({ visible, onClose, onCat
   const [newCategoryTitle, setNewCategoryTitle] = useState('');
   const [newCategoryColor, setNewCategoryColor] = useState(NEW_CATEGORY_DEFAULT_COLOR);
   const [isColorPickerVisible, setColorPickerVisible] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
 
   useEffect(() => {
     fetchCategories();
@@ -47,6 +48,27 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({ visible, onClose, onCat
     );
   };
 
+  const confirmDeleteCategory = (category: Category) => {
+    setCategoryToDelete(category);
+  };
+
+  const handleDeleteCategory = () => {
+    if (categoryToDelete) {
+      deleteCategory(categoryToDelete.id,
+        () => {
+          setCategories(categories.filter(c => c.id !== categoryToDelete.id));
+          setCategoryToDelete(null);
+          Alert.alert("Sukces", "Usunięto kategorię");
+        },
+        (error: any) => {
+          console.error(error);
+          Alert.alert("Błąd", "Nie udało się usunąć kategorii");
+          setCategoryToDelete(null);
+        }
+      );
+    }
+  };
+
   return (
     <Modal visible={visible} onRequestClose={onClose} animationType="slide" transparent>
       <View style={styles.modalContainer}>
@@ -61,10 +83,15 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({ visible, onClose, onCat
             data={categories}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
-              <TouchableOpacity onPress={() => onCategorySelect(item)} style={styles.categoryItem}>
-                <View style={[styles.categoryColorCircle, { backgroundColor: item.color }]} />
-                <Text style={styles.categoryTitle}>{item.title}</Text>
-              </TouchableOpacity>
+              <View style={styles.categoryItemContainer}>
+                <TouchableOpacity onPress={() => onCategorySelect(item)} style={styles.categoryItem}>
+                  <View style={[styles.categoryColorCircle, { backgroundColor: item.color }]} />
+                  <Text style={styles.categoryTitle}>{item.title}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => confirmDeleteCategory(item)}>
+                  <Ionicons name="close" size={24} color="gray" />
+                </TouchableOpacity>
+              </View>
             )}
           />
           <View style={styles.newCategoryContainer}>
@@ -99,6 +126,21 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({ visible, onClose, onCat
             </View>
           </View>
         </Modal>
+        <Modal visible={!!categoryToDelete} onRequestClose={() => setCategoryToDelete(null)} animationType="slide" transparent>
+          <View style={styles.confirmDeleteOverlay}>
+            <View style={styles.confirmDeleteModalContent}>
+              <Text style={styles.confirmDeleteText}>Czy na pewno chcesz usunąć kategorię?</Text>
+              <View style={styles.confirmDeleteButtonContainer}>
+                <TouchableOpacity onPress={() => setCategoryToDelete(null)} style={styles.confirmDeleteButton}>
+                  <Text style={styles.confirmDeleteButtonText}>Nie</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleDeleteCategory} style={styles.confirmDeleteButton}>
+                  <Text style={styles.confirmDeleteButtonText}>Tak</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </View>
     </Modal>
   );
@@ -128,13 +170,19 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
   },
-  categoryItem: {
+  categoryItemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
     padding: 10,
     marginVertical: 5,
     borderRadius: 5,
-    width: '100%',
+  },
+  categoryItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
   },
   categoryColorCircle: {
     width: 20,
@@ -185,8 +233,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     overflow: 'hidden',
     justifyContent: 'center',
-    flex: 1
-    
+    flex: 1,
   },
   colorPickerCloseButton: {
     backgroundColor: '#505168',
@@ -196,6 +243,38 @@ const styles = StyleSheet.create({
     marginTop: 60,
   },
   colorPickerCloseButtonText: {
+    color: 'white',
+  },
+  confirmDeleteOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  confirmDeleteModalContent: {
+    width: '80%',
+    padding: 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  confirmDeleteText: {
+    fontSize: 18,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  confirmDeleteButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+  },
+  confirmDeleteButton: {
+    backgroundColor: '#505168',
+    borderRadius: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  confirmDeleteButtonText: {
     color: 'white',
   },
 });
