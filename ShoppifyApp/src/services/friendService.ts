@@ -50,7 +50,7 @@ export const getFriends = async (onSuccess: (friends: Friend[]) => void, onError
 export const shareShoppingList = async (listId: number, friendIds: number[], onSuccess: () => void, onError: (error: any) => void) => {
     try {
         const token = await AsyncStorage.getItem('token');
-        const response = await axiosInstance.post('/shopping-list/share', { shopping_list_id: listId, friend_ids: friendIds }, {
+        const response = await axiosInstance.post('/shopping-list/share', { shopping_list_id: Number(listId), friend_ids: friendIds.map((id: number)=> ({friend_id: id})) }, {
             headers: { token: token }
         });
 

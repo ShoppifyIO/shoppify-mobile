@@ -7,7 +7,7 @@ import { ShoppingListItem, createEmptyItem } from '../../models/shoppingListItem
 import ConfettiCannon from 'react-native-confetti-cannon';
 import FriendsShareModal from '../FriendShareModal';
 import CategoryPicker from '../CategoryPicker';
-import { saveShoppingList as addShoppingList, getShoppingList, modifyShoppingList, newShoppingList } from '../../services/shoppingListService';
+import { saveShoppingList as addShoppingList, completeShoppingList, getShoppingList, incompleteShoppingList, modifyShoppingList, newShoppingList } from '../../services/shoppingListService';
 import { ShoppingListEdit, initShoppingListEdit, updateShoppingItem } from '../../models/edit/shoppingListEdit';
 import { Category } from '../../models/category';
 import { completeShoppingListItem, incompleteShoppingListItem } from '../../services/shoppingListItemService';
@@ -23,7 +23,6 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
   const [list, setList] = useState<ShoppingList>(newShoppingList);
   const [editMode, setEditMode] = useState<boolean>(props.editMode ?? false);
   const [listModifications, setListModifications] = useState<ShoppingListEdit | null>(null);
-  const [completed, setCompleted] = useState(false);
   const [isShareModalVisible, setShareModalVisible] = useState(false);
   const [isCategoryPickerVisible, setCategoryPickerVisible] = useState(false);
   const confettiRef = useRef<ConfettiCannon>(null);
@@ -113,8 +112,32 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
   };
 
   const handleCompletion = () => {
-    setCompleted(!completed);
-    if (!completed && confettiRef.current) {
+    setList((prev: ShoppingList) => ({
+      ...prev,
+      is_completed: !prev.is_completed
+    }));
+    
+    if (list.id !== -1) {
+      if (list.is_completed) {
+        incompleteShoppingList(list.id, (updatedList) => {
+          setList(updatedList);
+          console.log("List marked as incomplete successfully");
+        }, (error) => {
+          console.error("Failed to mark list as incomplete", error);
+          Alert.alert("Błąd", "Wystąpił błąd podczas oznaczania listy jako nieukończonej");
+        });
+      } else {
+        completeShoppingList(list.id, (updatedList) => {
+          setList(updatedList);
+          console.log("List completed successfully");
+        }, (error) => {
+          console.error("Failed to complete list", error);
+          Alert.alert("Błąd", "Wystąpił błąd podczas oznaczania listy jako ukończonej");
+        });
+      }
+    }
+    
+    if (!list.is_completed && confettiRef.current) {
       confettiRef.current.start();
     }
   };
@@ -225,7 +248,7 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
   };
 
   return (
-    <View style={[styles.modalContainer, { backgroundColor: completed ? '#f0f0f0' : 'white' }]}>
+    <View style={[styles.modalContainer, { backgroundColor: list.is_completed ? '#f0f0f0' : 'white' }]}>
       <View style={styles.header}>
         <TextInput
           style={styles.input}
@@ -253,8 +276,8 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
                 <Ionicons name="share-social-outline" size={28} color="gray" />
               </TouchableOpacity>
             }
-            <TouchableOpacity style={styles.star} onPress={handleCompletion}>
-              <Ionicons name={completed ? "checkmark-circle" : "checkmark-circle-outline"} size={completed ? 48 : 28} color={completed ? "#A7C7E7" : "gray"} />
+            <TouchableOpacity disabled={list.id === -1} style={styles.star} onPress={handleCompletion}>
+              <Ionicons name={list.is_completed ? "checkmark-circle" : "checkmark-circle-outline"} size={list.is_completed ? 48 : 28} color={list.is_completed ? "#A7C7E7" : "gray"} />
             </TouchableOpacity>
           </View>
         )}
@@ -285,7 +308,7 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
               onCompletedChange={(newValue) => handleItemCompleted({ ...item, is_completed: newValue }, index)}
               onAddNewItem={addEmptyItem}
               readOnly={!editMode}
-              checkDisabled={completed || editMode}
+              checkDisabled={list.is_completed || editMode}
               isOdd={index % 2 == 1}
               onDeleted={()=> handleDelete(index)}
             />
@@ -293,7 +316,7 @@ const EditListModal: React.FC<EditListModalProps> = (props: EditListModalProps) 
           keyExtractor={(_, index) => index.toString()}
         />
       </>
-      {completed && (
+      {list.is_completed && (
         <ConfettiCannon
           count={200}
           origin={{ x: -10, y: 0 }}

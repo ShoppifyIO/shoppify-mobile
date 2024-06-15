@@ -158,6 +158,55 @@ export const getArchivedShoppingLists = async (onSuccess: (lists: ShoppingListHe
     }
 };
 
+export const completeShoppingList = async (
+    listId: number,
+    onSuccess: (list: ShoppingList) => void,
+    onError: (error: any) => void
+) => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await axiosInstance.post(`/shopping-list/complete/${listId}`, {}, {
+            headers: { token: token }
+        });
+
+        if (response.status === 200) {
+            const updatedList = response.data;
+            onSuccess(updatedList);
+        } else {
+            console.error("Failed to complete the list", response.status);
+            onError(new Error("Nie udało się ukończyć listy"));
+        }
+    } catch (error) {
+        console.error(error);
+        onError(error);
+    }
+};
+
+export const incompleteShoppingList = async (
+    listId: number,
+    onSuccess: (list: ShoppingList) => void,
+    onError: (error: any) => void
+) => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await axiosInstance.post(`/shopping-list/incomplete/${listId}`, {}, {
+            headers: { token: token }
+        });
+
+        if (response.status === 200) {
+            const updatedList = response.data;
+            onSuccess(updatedList);
+        } else {
+            console.error("Failed to mark the list as incomplete", response.status);
+            onError(new Error("Nie udało się oznaczyć listy jako nieukończonej"));
+        }
+    } catch (error) {
+        console.error(error);
+        onError(error);
+    }
+};
+
+
 export const newShoppingList: ShoppingList = {
     id: -1,
     owner_id: -1,

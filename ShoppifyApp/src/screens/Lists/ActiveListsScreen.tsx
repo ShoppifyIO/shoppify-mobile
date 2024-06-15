@@ -54,18 +54,23 @@ const ActiveListsScreen: React.FC = () => {
       completed: updatedList.is_completed,
     };
     setLists([header, ...lists.filter(list => list.id !== header.id)]);
-    setModalVisible(false);
+    closeModal();
     fetchActiveLists();
   };
 
   const onCancel = () => {
-    setModalVisible(false);
+    closeModal();
   };
 
   const onPress = (id: number) => {
     setCurrentListId(id);
-    setModalVisible(true); 
+    setModalVisible(true);
   }
+
+  const closeModal = () => {
+    setModalVisible(false);
+    onRefresh();
+  };
 
   return (
     <View style={listStyles.container}>
@@ -80,13 +85,13 @@ const ActiveListsScreen: React.FC = () => {
       <ActionButton onPress={addNewList} label={'+'} />
       <Modal
         visible={isModalVisible}
-        onRequestClose={() => setModalVisible(false)}
+        onRequestClose={closeModal}
       >
         <EditListModal
           listId={currentListId ?? -1}
           editMode={currentListId === -1}
           onSave={saveList}
-          onCancel={onCancel} 
+          onCancel={onCancel}
         />
       </Modal>
     </View>
